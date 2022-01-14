@@ -1,15 +1,15 @@
 export default [
   {
-    url: 'https://media.alltricks.com/medium/21328346141fff0a3a3d1.38957734.jpg?frz-v=352'
+    url: 'https://media.alltricks.com/hd/209827460e6bf66c79722.43235957.jpg'
   }, {
-    url: 'https://media.alltricks.com/medium/21328346141ffef1db4b8.56476452.jpg?frz-v=352'
+    url: 'https://media.alltricks.com/hd/209827460e6bf6a6f2e58.16046081.jpg'
   }, {
-    url: 'https://media.alltricks.com/medium/21328346141fff0d97e05.19435514.jpg?frz-v=352'
+    url: 'https://media.alltricks.com/hd/209827460e6bf70d0d034.37002259.jpg'
   }, {
-    url: 'https://media.alltricks.com/medium/21328346141ffefcd9710.64287714.jpg?frz-v=352'
+    url: 'https://media.alltricks.com/hd/209827460e6bf73ee1617.43075291.jpg'
   }, {
-    url: 'https://media.alltricks.com/medium/21328346141ffee390259.19028112.jpg?frz-v=352'
+    url: 'https://media.alltricks.com/hd/209827460e6bf8ac7b403.69075158.jpg'
   }, {
-    url: 'https://media.alltricks.com/medium/21328346141ffeedd2b37.90333630.jpg?frz-v=352'
+    url: 'https://media.alltricks.com/hd/209827460e6bf861c41d1.37695862.jpg'
   }
 ]

@@ -42,3 +42,26 @@ a {
     letter-spacing: 0.1rem;
     color: hsl(210, 64%, 30%);
 }
+
+@media (max-width: 768px) {
+    button.nav {
+        display: none;
+    }
+}
+
+.box-image {
+    width: 100%;
+    height: 100%;
+    border:1px solid #008bd2;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.box-image img {
+    width: auto;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+}
