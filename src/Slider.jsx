@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useState } from 'react'
+import React, { useRef, useCallback, useState, useEffect } from 'react'
 import { useDrag, useGesture } from '@use-gesture/react'
 import { useSprings, a, useSpring } from 'react-spring'
 import debounce from 'lodash.debounce'
@@ -14,12 +14,11 @@ const styles = {
     alignItems: 'center'
   },
   dot: {
-    borderRadius: '99px',
+    borderRadius: '100%',
     background: '#008bd2',
     width: '5px',
     height: '5px',
-    margin: '.3rem',
-    color: '#000'
+    margin: '.3rem'
   },
   buttonsContainer: {
     height: '100%',
@@ -85,7 +84,7 @@ export default function SliderContainer (props) {
  * @param {boolean} showCounter - shows counter
  */
 // eslint-disable-next-line react/prop-typesxMove
-function Slider ({ items, itemWidth = 'full', visible = items.length - 2, style, children, showButtons = true, showCounter = true }) {
+const Slider = ({ items, itemWidth = 'full', visible = items.length - 2, style, children, showButtons = true, showCounter = true }) => {
   if (items.length <= 2) { console.warn("The slider doesn't handle two or less items very well, please use it with an array of at least 3 items in length") }
   const windowWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth
   const width = itemWidth === 'full' ? windowWidth : Math.ceil(itemWidth)
@@ -138,10 +137,6 @@ function Slider ({ items, itemWidth = 'full', visible = items.length - 2, style,
     axis: 'x'
   }
 
-  // const bind = useDrag(({ offset: [x], vxvy: [vx], down, direction: [xDir], cancel, movement: [xMove] }) => {
-  //   vx && runSprings(-x, -vx, down, xDir, cancel, xMove)
-  // }, dragConfig)
-
   // const wheelOffset = useRef(0)
   // const dragOffset = useRef(0)
   // const bind = useGesture({
@@ -149,16 +144,13 @@ function Slider ({ items, itemWidth = 'full', visible = items.length - 2, style,
   //   onWheel: ({ offset: [, y], vxvy: [, vy] }) => vy && ((wheelOffset.current = y), runSprings(dragOffset.current + y, 0))
   // })
 
-  // const bind = useGesture({
-  //   onDrag: ({ offset: [x], vxvy: [vx], down, direction: [xDir], cancel, distance, movement: [xMove] }) => {
-  //     vx && runSprings(-x, -vx, down, xDir, cancel, distance, xMove)
-  //   }
+  // const bind = useDrag(({ offset: [x], vxvy: [vx], down, direction: [xDir], cancel, movement: [xMove] }) => {
+  //   vx && runSprings(-x, -vx, down, xDir, cancel, xMove)
   // })
 
-  const bind = useDrag(state => {
-    console.log(state)
-    const { offset: [x], down, movement: [xMove], cancel, direction: [xDir] } = state
-    runSprings(-x, 5, down, xDir, cancel, xMove)
+  const bind = useGesture({
+    onDrag: ({ offset: [x], direction: [xDir], down, movement: [xMove], cancel }) => xDir && runSprings(-x, -xDir, down, xDir, cancel, xMove),
+    onWheel: ({ offset: [, y], direction: [, vy], down, movement: [xMove], cancel }) => vy && runSprings(-y, -vy, down, vy, cancel, xMove)
   }, dragConfig)
 
   const buttons = (next) => {
@@ -209,16 +201,18 @@ function InstaCounter ({ currentIndex, data }) {
   }
   return (
     <div>
-      <div style={{ ...styles.dotContainer }}>{dots}</div>
+      <div style={{ ...styles.dotContainer }}>
+        {dots}
+      </div>
     </div>
   )
 }
 
 // eslint-disable-next-line react/prop-types
-function Dot ({ active }) {
+const Dot = ({ active }) => {
   const { transform, opacity } = useSpring({
-    opacity: active ? 1 : 0.8,
-    transform: active ? 'scale(1.5)' : 'scale(1)',
+    opacity: active ? 1 : 0.7,
+    transform: active ? 'scale(2)' : 'scale(1)',
     config: { mass: 5, tension: 500, friction: 80 }
   })
   return <a.div style={{ opacity: opacity.to((o) => o), transform, ...styles.dot }} />
