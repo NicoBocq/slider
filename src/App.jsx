@@ -11,6 +11,7 @@ const Main = styled.div`
   margin: 0 auto;
   @media (max-width: 768px) {
     width: 100%;
+    height: 300px;
   }
 `
 
@@ -18,6 +19,17 @@ const Content = styled.div`
   width: 100%;
   height: 100%;
   position: relative;
+  & img {
+   max-height:450px;
+    display: block;
+    margin: 0 auto;
+  }
+  @media (max-width: 768px) {
+    & img {
+      max-width: 100%;
+      max-height: 100%;
+    }
+  }
 `
 
 const Image = styled(a.div)`
@@ -26,23 +38,13 @@ const Image = styled(a.div)`
   background-size: cover;
   background-position: center center;
 `
-const Info = styled.div`
-  position: absolute;
-  left: 0;
-  right: 0;
-  background-color: black;
-  color: white;
-  padding: 1rem;
-  width: min-content;
-  opacity: 0.8;
-`
 
 const App = () => (
   <Main>
     <Carousel items={items} itemWidth={'full'} visible={2}>
       {({ url }, i) => (
         <Content>
-          <Image style={{ backgroundImage: `url(${url})` }} />
+          <img src={url} alt="" />
         </Content>
       )}
     </Carousel>

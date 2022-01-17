@@ -81,4 +81,5 @@ a {
     height: 100%;
     max-width: none;
     max-height: none;
+    cursor: move;
 }

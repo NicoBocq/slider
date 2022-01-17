@@ -5,7 +5,7 @@ import debounce from 'lodash.debounce'
 
 const styles = {
   container: { display: 'flex', alignItems: 'center', position: 'relative', overflow: 'hidden', height: '100%', width: '100%' },
-  item: { position: 'absolute', height: '100%', willChange: 'transform' },
+  item: { position: 'absolute', height: '100%', willChange: 'transform', touchAction: 'none' },
   dotContainer: {
     padding: '0.7rem 1rem',
     color: '#fff',
@@ -15,10 +15,10 @@ const styles = {
   },
   dot: {
     borderRadius: '100%',
-    background: '#008bd2',
-    width: '5px',
-    height: '5px',
+    width: '8px',
+    height: '8px',
     margin: '.3rem',
+    border: '1px solid #707070',
     '&:hover': {
       background: 'red'
     }
@@ -150,10 +150,6 @@ const Slider = ({ items, itemWidth = 'full', visible = items.length - 2, style, 
     [idx, getPos, width, visible, setSprings, items.length]
   )
 
-  const dragConfig = {
-    axis: 'x'
-  }
-
   // const wheelOffset = useRef(0)
   // const dragOffset = useRef(0)
   // const bind = useGesture({
@@ -174,7 +170,12 @@ const Slider = ({ items, itemWidth = 'full', visible = items.length - 2, style, 
       // use scroll y (vy) direction to determine direction
       runSprings(-y, -vy, down, vy, cancel, xMove)
     }
-  }, dragConfig)
+  }, {
+    eventOptions: {
+      capture: false,
+      passive: true
+    }
+  })
 
   const buttons = (next) => {
     console.log(index.current)
@@ -216,6 +217,8 @@ const Slider = ({ items, itemWidth = 'full', visible = items.length - 2, style, 
           setCrop((crop) => ({ ...crop, x: dx, y: dy }))
         },
         onPinch: ({ offset: [d] }) => {
+          console.log(d)
+          // if (d > 5 || d < -10) return
           setCrop((crop) => ({ ...crop, scale: d }))
         }
       },
@@ -224,13 +227,14 @@ const Slider = ({ items, itemWidth = 'full', visible = items.length - 2, style, 
         eventOptions: { passive: false }
       })
 
-    const { opacity } = useSpring({
+    const { opacity, transform } = useSpring({
       opacity: show ? 1 : 0,
+      transform: show ? 'translate(0,0)' : 'translate(0,150px)',
       config: { mass: 5, tension: 500, friction: 80 }
     })
 
     return (
-      <animated.div style={{ ...styles.overlay, display: show ? 'flex' : 'none', opacity: opacity.to((o) => o) }}>
+      <animated.div style={{ ...styles.overlay, display: show ? 'flex' : 'none', opacity: opacity, transform }}>
         <button onClick={() => setShow(false)} className="close">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -244,8 +248,7 @@ const Slider = ({ items, itemWidth = 'full', visible = items.length - 2, style, 
               left: crop.x,
               top: crop.y,
               transform: `scale(${crop.scale})`,
-              touchAction: 'none',
-              cursor: 'move'
+              touchAction: 'none'
             }}
             ref={imageRef}
           />
@@ -305,10 +308,11 @@ const NavCounter = ({ currentIndex, data, fnOnclick }) => {
 
 // eslint-disable-next-line react/prop-types
 const Dot = ({ active, id, fnOnclick }) => {
-  const { transform, opacity } = useSpring({
-    opacity: active ? 1 : 0.7,
-    transform: active ? 'scale(2)' : 'scale(1)',
+  const { transform, opacity, background } = useSpring({
+    opacity: active ? 1 : 1,
+    transform: active ? 'scale(1)' : 'scale(1)',
+    background: active ? '#707070' : '#fff',
     config: { mass: 5, tension: 500, friction: 80 }
   })
-  return <animated.div style={{ opacity: opacity.to((o) => o), transform, ...styles.dot }} onClick={() => fnOnclick(id)} />
+  return <animated.div style={{ opacity: opacity.to((o) => o), transform, background, ...styles.dot }} onClick={() => fnOnclick(id)} />
 }
