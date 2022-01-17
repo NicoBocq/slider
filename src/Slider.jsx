@@ -60,14 +60,6 @@ const styles = {
     justifyContent: 'center',
     background: '#fff',
     overflow: 'hidden'
-  },
-  close: {
-    zIndex: '101',
-    background: '#fff',
-    position: 'absolute',
-    top: '2rem',
-    right: '2rem',
-    fontSize: '1.5rem'
   }
 }
 
@@ -211,6 +203,13 @@ const Slider = ({ items, itemWidth = 'full', visible = items.length - 2, style, 
   const Overlay = () => {
     const [crop, setCrop] = useState({ x: 0, y: 0, scale: 1 })
     const imageRef = useRef()
+    // const runCrop = useCallback((e) => {
+    //   console.log(e.offset)
+    //   const x = e.xy[0]
+    //   const y = e.xy[1]
+    //   const scale = e.offset
+    //   setCrop({ x, y, scale })
+    // }, [])
     useGesture(
       {
         onDrag: ({ offset: [dx, dy] }) => {
@@ -232,7 +231,11 @@ const Slider = ({ items, itemWidth = 'full', visible = items.length - 2, style, 
 
     return (
       <animated.div style={{ ...styles.overlay, display: show ? 'flex' : 'none', opacity: opacity.to((o) => o) }}>
-        <button onClick={() => setShow(false)} style={styles.close}>X</button>
+        <button onClick={() => setShow(false)} className="close">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
         <div className="box-image">
           <img
             src={overlayUrl}
@@ -241,7 +244,8 @@ const Slider = ({ items, itemWidth = 'full', visible = items.length - 2, style, 
               left: crop.x,
               top: crop.y,
               transform: `scale(${crop.scale})`,
-              touchAction: 'none'
+              touchAction: 'none',
+              cursor: 'move'
             }}
             ref={imageRef}
           />
