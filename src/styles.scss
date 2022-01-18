@@ -1,0 +1,198 @@
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, helvetica neue, helvetica, ubuntu, roboto, noto, segoe ui, arial,
+    sans-serif;
+    background: transparent;
+}
+
+#root {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    background: #fff;
+}
+
+.at-slider {
+    user-select: none;
+    width: 100%;
+    position: relative;
+    height: 450px;
+    margin: 0 auto;
+    @media (max-width: 768px) {
+        height: 300px;
+    }
+    img {
+          max-height:450px;
+          display: block;
+          margin: 0 auto;
+      }
+    @media (max-width: 768px) {
+        img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+    }
+
+    .container {
+        display: flex;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+        height: 100%;
+        width: 100%;
+    }
+    .item {
+        position: absolute;
+        height: 100%;
+        will-change: transform;
+        touch-action: none;
+        background-color: #fff;
+    }
+}
+
+@media (max-width: 768px) {
+    button.nav {
+        display: none;
+    }
+}
+
+.close svg {
+    width: 24px;
+    height: 24px;
+}
+
+.box-image {
+    & img {
+        position: relative;
+        width: 100%;
+        max-width: none;
+        max-height: 100%;
+        cursor: move;
+    }
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 100;
+    width: 100vw;
+    // todo : implement in app
+    height: calc( 100vh - 70px );
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    overflow: hidden;
+
+    .pinch-icon {
+        display: none;
+        position: absolute;
+        right: 2rem;
+        bottom: 8rem;
+        width: 40px;
+        height: 40px;
+        border-radius: 100%;
+        background: #E6E6E6;
+        svg {
+            width: 20px;
+            height: 20px;
+            color: #707070;
+        }
+        @media (max-width: 768px) {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+
+    .nav-list {
+        display: none;
+        position: absolute;
+        z-index: 101;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        overflow-x: auto;
+        overflow-y: hidden;
+        cursor: pointer;
+        padding: 1rem 2rem;
+        background: #fff;
+
+        .nav-item {
+            box-sizing: border-box;
+            flex-shrink: 0;
+            width: 44px;
+            height: 44px;
+            margin: 0 1rem 0 0;
+            background-position: center center;
+            background-size: cover;
+            border: 2px solid transparent;
+            &.selected {
+                border: 2px solid #008bd2;
+            }
+        }
+        @media (max-width: 768px) {
+            display: flex;
+            justify-items: start;
+            align-items: center;
+        }
+    }
+
+    .box-image {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .close {
+        display: inline-block;
+        z-index: 101;
+        background: transparent;
+        position: absolute;
+        top: 2rem;
+        right: 2rem;
+        border:0;
+        padding: 0;
+        color: #707070;
+    }
+}
+
+.nav-container {
+    padding: 0.7rem 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .nav-item {
+        border-radius: 100%;
+        width: 8px;
+        height: 8px;
+        margin: .3rem;
+        border: 1px solid #707070;
+        cursor: pointer;
+        &:hover {
+            border: 1px solid #008bd2;
+        }
+    }
+}

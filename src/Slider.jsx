@@ -1,28 +1,11 @@
 import React, { useRef, useCallback, useState, useEffect } from 'react'
-import { useDrag, useGesture, usePinch } from '@use-gesture/react'
+import { useGesture } from '@use-gesture/react'
 import { useSprings, animated, useSpring } from 'react-spring'
 import debounce from 'lodash.debounce'
+import Overlay from './Overlay'
+import Nav from './Nav'
 
 const styles = {
-  container: { display: 'flex', alignItems: 'center', position: 'relative', overflow: 'hidden', height: '100%', width: '100%' },
-  item: { position: 'absolute', height: '100%', willChange: 'transform', touchAction: 'none' },
-  dotContainer: {
-    padding: '0.7rem 1rem',
-    color: '#fff',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  dot: {
-    borderRadius: '100%',
-    width: '8px',
-    height: '8px',
-    margin: '.3rem',
-    border: '1px solid #707070',
-    '&:hover': {
-      background: 'red'
-    }
-  },
   buttonsContainer: {
     height: '100%',
     width: '100%',
@@ -46,20 +29,6 @@ const styles = {
     border: 'none',
     marginLeft: '-30px',
     right: 0
-  },
-  overlay: {
-    position: 'fixed',
-    top: 0,
-    right: 0,
-    zIndex: '100',
-    width: '100vw',
-    height: '100vh',
-    display: 'none',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    background: '#fff',
-    overflow: 'hidden'
   }
 }
 
@@ -74,12 +43,10 @@ export default function SliderContainer (props) {
 
   return (
     <>
-      <div ref={measuredRef} style={{ height: '100%', position: 'relative' }}>
+      <div ref={measuredRef} className="at-slider">
         {width !== 0
           ? (
-          <Slider {...props} itemWidth={width}>
-            {props.children}
-          </Slider>
+          <Slider {...props} itemWidth={width} />
             )
           : (
               'null'
@@ -101,15 +68,14 @@ export default function SliderContainer (props) {
  * @param {boolean} showCounter - shows counter
  */
 
-const Slider = ({ items, itemWidth = 'full', visible = items.length - 2, style, children, showButtons = true, showCounter = true }) => {
-  if (items.length <= 2) { console.warn("The slider doesn't handle two or less items very well, please use it with an array of at least 3 items in length") }
+const Slider = ({ items, itemWidth = 'full', visible = items.length - 2, style, showButtons = true, showCounter = true }) => {
   const windowWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth
   const width = itemWidth === 'full' ? windowWidth : Math.ceil(itemWidth)
   const idx = useCallback((x, l = items.length) => (x < 0 ? x + l : x) % l, [items])
   const getPos = useCallback((i, firstVis, firstVisIdx) => idx(i - firstVis + firstVisIdx), [idx])
   // Important only if specifyng width, centers the element in the slider
   const offset = 0
-  const [springs, setSprings] = useSprings(items.length, (i) => ({ x: (i < items.length - 1 ? i : -1) * width + offset }))
+  const [springList, setSprings] = useSprings(items.length, (i) => ({ x: (i < items.length - 1 ? i : -1) * width + offset }))
   const prev = useRef([0, 1])
   const index = useRef(0)
   const [active, setActive] = useState(1)
@@ -166,7 +132,7 @@ const Slider = ({ items, itemWidth = 'full', visible = items.length - 2, style, 
       const dir = xDir < 0 ? 1 : -1
       xDir && runSprings(-x, dir, down, xDir, cancel, xMove)
     },
-    onWheel: ({ offset: [x, y], direction: [, vy], down, movement: [xMove], cancel }) => {
+    onWheel: ({ offset: [, y], direction: [, vy], down, movement: [xMove], cancel }) => {
       // use scroll y (vy) direction to determine direction
       runSprings(-y, -vy, down, vy, cancel, xMove)
     }
@@ -177,84 +143,23 @@ const Slider = ({ items, itemWidth = 'full', visible = items.length - 2, style, 
     }
   })
 
-  const buttons = (next) => {
-    console.log(index.current)
+  const onClickButtons = (next) => {
     index.current += next
-    console.log(next)
     runSprings(0, next, true, -0, () => {}, -0)
   }
 
-  const debounceTransition = debounce(buttons, 10)
-
-  const onClickPicture = (url) => {
-    setShow(true)
-    setOverlayUrl(url)
-  }
-
-  const onDotClick = (id) => {
+  const onClickNav = (id) => {
     index.current = id
     runSprings(0, id, true, -0, () => {}, -0)
   }
 
-  const debounceDotClick = debounce(onDotClick, 10)
+  const debounceTransition = debounce(onClickButtons, 10)
+  const debounceDotClick = debounce(onClickNav, 10)
 
-  const [show, setShow] = useState(false)
-  const [overlayUrl, setOverlayUrl] = useState('')
+  const [isOverlayActive, setOverlay] = useState(false)
 
-  const Overlay = () => {
-    const [crop, setCrop] = useState({ x: 0, y: 0, scale: 1 })
-    const imageRef = useRef()
-    // const runCrop = useCallback((e) => {
-    //   console.log(e.offset)
-    //   const x = e.xy[0]
-    //   const y = e.xy[1]
-    //   const scale = e.offset
-    //   setCrop({ x, y, scale })
-    // }, [])
-    useGesture(
-      {
-        onDrag: ({ offset: [dx, dy] }) => {
-          setCrop((crop) => ({ ...crop, x: dx, y: dy }))
-        },
-        onPinch: ({ offset: [d] }) => {
-          console.log(d)
-          // if (d > 5 || d < -10) return
-          setCrop((crop) => ({ ...crop, scale: d }))
-        }
-      },
-      {
-        target: imageRef,
-        eventOptions: { passive: false }
-      })
-
-    const { opacity, transform } = useSpring({
-      opacity: show ? 1 : 0,
-      transform: show ? 'translate(0,0)' : 'translate(0,150px)',
-      config: { mass: 5, tension: 500, friction: 80 }
-    })
-
-    return (
-      <animated.div style={{ ...styles.overlay, display: show ? 'flex' : 'none', opacity: opacity, transform }}>
-        <button onClick={() => setShow(false)} className="close">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-        <div className="box-image">
-          <img
-            src={overlayUrl}
-            alt=""
-            style={{
-              left: crop.x,
-              top: crop.y,
-              transform: `scale(${crop.scale})`,
-              touchAction: 'none'
-            }}
-            ref={imageRef}
-          />
-          </div>
-      </animated.div>
-    )
+  const onClickOverlay = () => {
+    setOverlay(true)
   }
 
   return (
@@ -278,41 +183,15 @@ const Slider = ({ items, itemWidth = 'full', visible = items.length - 2, style, 
         </div>
           )
         : null}
-      <div {...bind()} style={{ ...style, ...styles.container }}>
-        {springs.map(({ x, vel }, i) => (
-          <animated.div key={i} style={{ ...styles.item, width, x }} children={children(items[i], i)} onClick={() => onClickPicture(items[i].url)} />
+      <div {...bind()} className="container" style={{ ...style }}>
+        {springList.map(({ x, vel }, i) => (
+          <animated.div key={i} className="item" style={{ width, x }} >
+            <img src={items[i].url} alt="" onClick={() => onClickOverlay()} />
+          </animated.div>
         ))}
       </div>
-      <Overlay />
-      {showCounter ? <NavCounter currentIndex={active} data={items} fnOnclick={debounceDotClick} /> : null}
+      <Overlay setOverlay={setOverlay} isActive={isOverlayActive} data={items} currentIndex={active} setActive={setActive} moveSlider={onClickNav} />
+       {showCounter ? <Nav currentIndex={active} data={items} onClick={debounceDotClick} /> : null}
     </>
   )
-}
-
-// eslint-disable-next-line react/prop-types
-const NavCounter = ({ currentIndex, data, fnOnclick }) => {
-  const dots = []
-
-  // eslint-disable-next-line react/prop-types
-  for (const [index] of data.entries()) {
-    dots.push(<Dot key={index} active={currentIndex - 1 === index} id={index} fnOnclick={fnOnclick} />)
-  }
-  return (
-    <div>
-      <div style={{ ...styles.dotContainer }}>
-        {dots}
-      </div>
-    </div>
-  )
-}
-
-// eslint-disable-next-line react/prop-types
-const Dot = ({ active, id, fnOnclick }) => {
-  const { transform, opacity, background } = useSpring({
-    opacity: active ? 1 : 1,
-    transform: active ? 'scale(1)' : 'scale(1)',
-    background: active ? '#707070' : '#fff',
-    config: { mass: 5, tension: 500, friction: 80 }
-  })
-  return <animated.div style={{ opacity: opacity.to((o) => o), transform, background, ...styles.dot }} onClick={() => fnOnclick(id)} />
 }
