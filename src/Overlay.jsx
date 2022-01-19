@@ -6,7 +6,6 @@ const Overlay = ({ setOverlay, isActive, data, currentIndex, setActive, moveSlid
   const [xy, setXY] = useState({ x: 0, y: 0 })
   const [scale, setScale] = useState(1)
   const imageRef = useRef()
-  const imageContainerRef = useRef()
 
   const resetCrop = () => {
     setXY({ x: 0, y: 0 })
@@ -19,7 +18,7 @@ const Overlay = ({ setOverlay, isActive, data, currentIndex, setActive, moveSlid
     moveSlider(selectedId)
   }
 
-  const onClick = (idx) => {
+  const onClick = (idx, item) => {
     resetCrop()
     setActive(idx + 1)
     // scrollTo(idx)
@@ -28,59 +27,21 @@ const Overlay = ({ setOverlay, isActive, data, currentIndex, setActive, moveSlid
   useGesture(
     {
       onDrag: ({ movement: [dx, dy] }) => {
-        setXY({ x: dx, y: dy })
+        scale > 1 && setXY({ x: dx, y: dy })
       },
-      onPinch: ({ memo, origin: [pinchOriginX, pinchOriginY], offset: [d] }) => {
+      onPinch: ({ offset: [d] }) => {
         // add max & min zoom
-        // if (d < 1 || d > 3) return
-        // memo ??= {
-        //   bounds: imageRef.current.getBoundingClientRect(),
-        //   xy,
-        //   scale
-        // }
-        // console.log(memo)
-        //
-        // const transformOriginX = memo.bounds.x + memo.bounds.width / 2
-        // const transformOriginY = memo.bounds.y + memo.bounds.height / 2
-        //
-        // const displacementX = (transformOriginX - pinchOriginX) / memo.scale
-        // const displacementY = (transformOriginY - pinchOriginY) / memo.scale
-        //
-        // const initialOffsetDistance = memo.scale
-        // const movementDistance = d - initialOffsetDistance
-        //
-        // setScale(d)
-        // setXY({
-        //   x: memo.xy.x + (displacementX * movementDistance) / 50,
-        //   y: memo.xy.y + (displacementY * movementDistance) / 50
-        // })
-        // setScale(d)
-        //
-        // return memo
         setScale(d)
       }
     },
     {
-      drag: {
-        threshold: 10,
-        bounds: imageContainerRef.current,
-        rubberband: true
-      },
-      // // Reset position on drag start
-      //   from: () => [xy.x, xy.y]
-      pinch: {
-        // control the min and max zoom
-        distanceBounds: {
-          min: 0
-        }
-      },
       target: imageRef,
       eventOptions: { passive: false }
     })
 
   const gestureStyles = useMemo(() => {
     const { x, y } = xy
-    // on normal zoom disable translating
+    // on normal zoom disable translate
     // if (scale === 1) {
     //   x = 0
     //   y = 0
@@ -134,6 +95,7 @@ const Overlay = ({ setOverlay, isActive, data, currentIndex, setActive, moveSlid
                 d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>
         </svg>
       </div>
+      <div className="console">{scale} - {xy.x} - {xy.y}</div>
       <div className="nav-list">
         {data.map((item, index) => (
           <div
@@ -145,11 +107,14 @@ const Overlay = ({ setOverlay, isActive, data, currentIndex, setActive, moveSlid
           />
         ))}
       </div>
-      <div className="box-image" ref={imageContainerRef}>
+      <div className="box-image">
         <animated.img
           src={processedUrl(data[selectedId].url)}
           alt=""
-          style={{ ...gestureStyles }}
+          style={{
+            touchAction: 'none',
+            ...gestureStyles
+          }}
           ref={imageRef}
         />
       </div>
