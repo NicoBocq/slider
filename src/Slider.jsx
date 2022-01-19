@@ -81,6 +81,15 @@ const Slider = ({ items, itemWidth = 'full', visible = items.length - 2, style, 
   const [active, setActive] = useState(1)
   const runSprings = useCallback(
     (y, vy, down, xDir, cancel, xMove) => {
+      console.log(y, vy, down, xDir, xMove)
+      /*
+      * y : current position of the element
+      * vy : current velocity of the element
+      * down : is the element being dragged
+      * xDir: direction of the movement
+      * cancel: cancel the movement
+      * XMove: current movement of the element
+      * */
       // This decides if we move over to the next slide or back to the initial
       if (!down) {
         index.current += ((-xMove + (width + xMove)) / width) * (xDir > 0 ? -1 : 1)
@@ -150,7 +159,7 @@ const Slider = ({ items, itemWidth = 'full', visible = items.length - 2, style, 
 
   const onClickNav = (id) => {
     index.current = id
-    runSprings(0, id, true, -0, () => {}, -0)
+    runSprings(0, id, true, 0, () => {}, 0)
   }
 
   const debounceTransition = debounce(onClickButtons, 10)

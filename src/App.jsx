@@ -5,7 +5,6 @@ import './styles.scss'
 
 // handle height in vh in css
 const appHeight = () => {
-  console.log('appHeight')
   const vh = window.innerHeight * 0.01
   document.documentElement.style.setProperty('--vh', `${vh}px`)
 }

@@ -167,6 +167,12 @@ body {
         display: flex;
         align-items: center;
         justify-content: center;
+        & img {
+            touch-action: none;
+            user-select: none;
+            -moz-user-select: none;
+            -webkit-user-drag: none;
+        }
     }
 
     .close {
