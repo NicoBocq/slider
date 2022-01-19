@@ -1,23 +1,15 @@
-import React, { useRef, useState, useEffect } from 'react'
+import React, { useRef, useState, useMemo, useEffect, useCallback } from 'react'
 import { useGesture } from '@use-gesture/react'
 import { animated, useSpring } from 'react-spring'
 
 const Overlay = ({ setOverlay, isActive, data, currentIndex, setActive, moveSlider }) => {
-  const [crop, setCrop] = useState({ x: 0, y: 0, scale: 1 })
-
+  const [xy, setXY] = useState({ x: 0, y: 0 })
+  const [scale, setScale] = useState(1)
   const imageRef = useRef()
 
-  // V -> useCallback
-  // const runCrop = useCallback((e) => {
-  //   console.log(e.offset)
-  //   const x = e.xy[0]
-  //   const y = e.xy[1]
-  //   const scale = e.offset
-  //   setCrop({ x, y, scale })
-  // }, [])
-  // V -> reset useState ?
   const resetCrop = () => {
-    setCrop({ x: 0, y: 0, scale: 1 })
+    setXY({ x: 0, y: 0 })
+    setScale(1)
   }
 
   const onClose = () => {
@@ -35,18 +27,31 @@ const Overlay = ({ setOverlay, isActive, data, currentIndex, setActive, moveSlid
   useGesture(
     {
       onDrag: ({ offset: [dx, dy] }) => {
-        setCrop((crop) => ({ ...crop, x: dx, y: dy }))
+        setXY({ x: dx, y: dy })
       },
       onPinch: ({ offset: [d] }) => {
         // add max & min zoom
-        if (d < 0.5 || d > 2.5) return
-        setCrop((crop) => ({ ...crop, scale: d }))
+        if (d < 1 || d > 3) return
+        setScale(d)
       }
     },
     {
       target: imageRef,
       eventOptions: { passive: false }
     })
+
+  const gestureStyles = useMemo(() => {
+    let { x, y } = xy
+    // on normal zoom disable translate
+    if (scale === 1) {
+      x = 0
+      y = 0
+    }
+    return {
+      transform: `translate(${x}px, ${y}px) scale(${scale})`,
+      cursor: scale > 1 ? 'pointer' : 'grab'
+    }
+  }, [xy, scale])
 
   const { opacity } = useSpring({
     opacity: isActive ? 1 : 0,
@@ -59,9 +64,9 @@ const Overlay = ({ setOverlay, isActive, data, currentIndex, setActive, moveSlid
     return acc
   }, {})
 
-  useEffect(() => {
-    console.log(refs)
-  }, [refs])
+  // useEffect(() => {
+  //   console.log(refs)
+  // }, [refs])
 
   const scrollTo = (id) => {
     refs[id].current.scrollLeft = 0
@@ -107,10 +112,8 @@ const Overlay = ({ setOverlay, isActive, data, currentIndex, setActive, moveSlid
           src={processedUrl(data[selectedId].url)}
           alt=""
           style={{
-            left: crop.x,
-            top: crop.y,
-            transform: `scale(${crop.scale})`,
-            touchAction: 'none'
+            touchAction: 'none',
+            ...gestureStyles
           }}
           ref={imageRef}
         />
