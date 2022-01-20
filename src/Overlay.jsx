@@ -1,11 +1,8 @@
-import React, { useRef, useState, useMemo } from 'react'
-import { useGesture } from '@use-gesture/react'
+import React, { useRef, useState } from 'react'
 import { animated, useSpring } from 'react-spring'
-import { animate, motion, useMotionValue } from 'framer-motion'
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch'
 
 const Overlay = ({ setOverlay, isActive, data, currentIndex, setActive, moveSlider }) => {
-  const [crop, setCrop] = useState({ x: 0, y: 0, scale: 1 })
   const transformRef = useRef()
   const resetCrop = () => {
     transformRef.current?.resetTransform()
