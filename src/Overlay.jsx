@@ -4,6 +4,7 @@ import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch'
 
 const Overlay = ({ setOverlay, isActive, data, currentIndex, setActive, moveSlider }) => {
   const transformRef = useRef()
+  const [doubleStep, setDoubleStep] = useState(8)
   const resetCrop = () => {
     transformRef.current?.resetTransform()
   }
@@ -68,10 +69,19 @@ const Overlay = ({ setOverlay, isActive, data, currentIndex, setActive, moveSlid
         ))}
       </div>
       <TransformWrapper
+        wrapperClass="box-image"
         ref={transformRef}
         initialScale={1}
         initialPositionX={0}
         initialPositionY={0}
+        doubleClick={{ step: doubleStep }}
+        onPanningStop={(e) => {
+          if (e.state.scale !== 1) {
+            setDoubleStep(-8)
+          } else {
+            setDoubleStep(8)
+          }
+        }}
         options={{
           limitX: true,
           limitY: true,
@@ -85,7 +95,7 @@ const Overlay = ({ setOverlay, isActive, data, currentIndex, setActive, moveSlid
         }}
       >
         <TransformComponent>
-          <img src={processedUrl(data[selectedId].url)} alt="test" />
+          <img src={processedUrl(data[selectedId].url)} alt="" />
         </TransformComponent>
       </TransformWrapper>
     </animated.div>
