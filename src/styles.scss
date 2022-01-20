@@ -90,7 +90,6 @@ body {
 }
 
 .overlay {
-    touch-action: none;
     position: fixed;
     top: 0;
     right: 0;
@@ -104,6 +103,8 @@ body {
     justify-content: center;
     background: #fff;
     overflow: hidden;
+    touch-action: none;
+    user-select: none;
 
     .console {
         position: absolute;
