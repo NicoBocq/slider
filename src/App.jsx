@@ -1,7 +1,8 @@
 import React from 'react'
-import Carousel from './Slider'
+import Slider from './Slider'
 import items from './items'
 import './styles.scss'
+import 'swiper/css/bundle'
 
 // handle height in vh in css
 const appHeight = () => {
@@ -12,7 +13,7 @@ window.addEventListener('load', appHeight)
 window.addEventListener('resize', appHeight)
 
 const App = () => (
-  <Carousel items={items} />
+  <Slider items={items} />
 )
 
 export default App

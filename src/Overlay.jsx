@@ -69,7 +69,6 @@ const Overlay = ({ setOverlay, isActive, data, currentIndex, setActive, moveSlid
         ))}
       </div>
       <TransformWrapper
-        wrapperClass="box-image"
         ref={transformRef}
         initialScale={1}
         initialPositionX={0}
@@ -81,17 +80,6 @@ const Overlay = ({ setOverlay, isActive, data, currentIndex, setActive, moveSlid
           } else {
             setDoubleStep(8)
           }
-        }}
-        options={{
-          limitX: true,
-          limitY: true,
-          minScale: 1,
-          maxScale: 1,
-          wheel: true,
-          pinch: true,
-          doubleClick: true,
-          drag: true,
-          transformOrigin: '0 0'
         }}
       >
         <TransformComponent>
