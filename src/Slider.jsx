@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useState } from 'react'
+import React, { useRef, useCallback, useState, useEffect } from 'react'
 import { animated, useSpring } from 'react-spring'
 import { Swiper, SwiperSlide } from 'swiper/react'
 
@@ -15,11 +15,27 @@ SwiperCore.use([Lazy, Zoom, Pagination, Navigation, EffectFade, Keyboard])
 
 export default function Slider ({ items }) {
   const [isOverlay, setOverlay] = useState(false)
-
+  const [allow, setAllow] = useState({ slideNext: true, slidePrev: true })
   const sliderRef = useRef(null)
 
   const toggleOverlay = () => {
     setOverlay(!isOverlay)
+  }
+
+  const allowSwipe = (e) => {
+    // todo condition zob
+    if (e.zoom.scale !== 3) {
+      console.log('disallow swipe')
+      setAllow({ slideNext: false, slidePrev: false })
+    } else {
+      console.log('allow swipe')
+      setAllow({ slideNext: true, slidePrev: true })
+    }
+  }
+
+  const onClose = () => {
+    setOverlay(false)
+    sliderRef.current.swiper.zoom.out()
   }
 
   const onClickImage = () => {
@@ -30,10 +46,10 @@ export default function Slider ({ items }) {
   const pagination = {
     clickable: true,
     renderBullet: function (index, className) {
-      if (!isOverlay) {
-        return '<span class=\"' + className + '\"></span>'
+      if (isOverlay) {
+        return `<span class="${className}"></span>`
       } else {
-        return `<div class="bullet" style="background-image:url(${items[index].url})"></div>`
+        return `<div class="${className}" style="background-image:url(${items[index].url_thumb})"></div>`
       }
     }
   }
@@ -49,7 +65,7 @@ export default function Slider ({ items }) {
       <div className="alltricks-slider">
         {isOverlay && (
           <>
-            <button onClick={() => toggleOverlay()} className="close">
+            <button onClick={() => onClose()} className="close">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
@@ -70,18 +86,27 @@ export default function Slider ({ items }) {
           loop={true}
           zoom={true}
           lazy={true}
+          preventInteractionOnTransition={true}
           keyboard={{
             enabled: true
           }}
-          effect={'fade'}
+          // effect={'fade'}
+          allowSlideNext={allow.slideNext}
+          allowSlidePrev={allow.slidePrev}
           pagination={pagination}
           navigation={true}
           className={ isOverlay ? 'overlay-slider' : '' }
+          onZoomChange={(e) => allowSwipe(e)}
         >
           {items.map((item, index) => (
             <SwiperSlide key={index}>
               <div className="swiper-zoom-container">
-                <img data-src={item.url_hd} alt="" onClick={() => onClickImage()} className="swiper-lazy" />
+                {item.vid
+                  ? (
+                    <img data-src={item.url_thumb} alt="" onClick={() => onClickImage()} className="swiper-lazy" />
+                    )
+                  : <img data-src={isOverlay ? item.url : item.url_hd} alt="" onClick={() => onClickImage()} className="swiper-lazy" />
+                }
               </div>
               <div className="swiper-lazy-preloader swiper-lazy-preloader-white" />
             </SwiperSlide>
