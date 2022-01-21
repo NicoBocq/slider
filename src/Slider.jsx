@@ -8,10 +8,10 @@ import 'swiper/css/navigation'
 import 'swiper/css/zoom'
 import 'swiper/css/effect-fade'
 import SwiperCore, {
-  Lazy, Zoom, Pagination, Navigation, EffectFade
+  Lazy, Zoom, Pagination, Navigation, EffectFade, Keyboard
 } from 'swiper'
 
-SwiperCore.use([Lazy, Zoom, Pagination, Navigation, EffectFade])
+SwiperCore.use([Lazy, Zoom, Pagination, Navigation, EffectFade, Keyboard])
 
 export default function Slider ({ items }) {
   const [isOverlay, setOverlay] = useState(false)
@@ -27,6 +27,17 @@ export default function Slider ({ items }) {
     toggleOverlay()
   }
 
+  const pagination = {
+    clickable: true,
+    renderBullet: function (index, className) {
+      if (!isOverlay) {
+        return '<span class=\"' + className + '\"></span>'
+      } else {
+        return `<div class="bullet" style="background-image:url(${items[index].url})"></div>`
+      }
+    }
+  }
+
   const { opacity } = useSpring({
     opacity: isOverlay ? 1 : 0,
     // transform: isActive ? 'translate(0,0)' : 'translate(0,150px)',
@@ -35,7 +46,7 @@ export default function Slider ({ items }) {
 
   return (
     <>
-      <animated.div className="alltricks-slider">
+      <div className="alltricks-slider">
         {isOverlay && (
           <>
             <button onClick={() => toggleOverlay()} className="close">
@@ -59,10 +70,11 @@ export default function Slider ({ items }) {
           loop={true}
           zoom={true}
           lazy={true}
-          effect={'fade'}
-          pagination={{
-            clickable: true
+          keyboard={{
+            enabled: true
           }}
+          effect={'fade'}
+          pagination={pagination}
           navigation={true}
           className={ isOverlay ? 'overlay-slider' : '' }
         >
@@ -75,7 +87,7 @@ export default function Slider ({ items }) {
             </SwiperSlide>
           ))}
         </Swiper>
-      </animated.div>
+      </div>
     </>
   )
 }

@@ -26,6 +26,30 @@ body {
     //background: #fff;
 }
 
+.product {
+    display: flex;
+    padding: 2rem;
+    @media screen and (max-width: 768px) {
+        flex-direction: column;
+        padding: 0;
+    }
+
+    .product-media {
+        width: 50%;
+    }
+
+    .product-info {
+        padding: 2rem;
+        width: 50%;
+    }
+
+    @media screen and (max-width: 768px) {
+        .product-info, .product-media {
+            width: 100%;
+        }
+    }
+}
+
 .alltricks-slider {
     position: relative;
 
@@ -41,9 +65,32 @@ body {
                 display: none;
             }
         }
+
+        .swiper-pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            .bullet {
+                box-sizing: border-box;
+                flex-shrink: 0;
+                width: 44px;
+                height: 44px;
+                margin: 0 1rem 0 0;
+                background-position: center center;
+                background-size: cover;
+                border: 2px solid transparent;
+                &.selected {
+                    border: 2px solid #008bd2;
+                }
+            }
+        }
+
         .swiper-pagination-bullet {
             border: 1px solid #707070;
             background: #fff;
+            width: 10px;
+            height: 10px;
             cursor: pointer;
             &.swiper-pagination-bullet-active {
                 background: #707070;
@@ -91,6 +138,7 @@ body {
 
     .pinch-icon {
         display: flex;
+        z-index: 101;
         justify-content: center;
         align-items: center;
         position: absolute;
