@@ -53,20 +53,22 @@ body {
 .alltricks-slider {
     position: relative;
 
+    .default {
+        height: 100%;
+    }
+
     .swiper {
         width: 100%;
         height: 100%;
         padding-bottom: 58px;
 
         .swiper-slide {
-            //height: 350px;
+            height: 350px;
             //display: flex;
             //justify-items: center;
             //align-items: center;
         }
 
-        .swiper-pagination {
-        }
         @media screen and (max-width: 768px) {
             .swiper-button-prev,  .swiper-button-next {
                 display: none;
@@ -77,8 +79,14 @@ body {
             display: flex;
             justify-content: start;
             align-items: center;
+            overflow-x: auto;
+            @media screen and (max-width: 768px) {
+                justify-content: start;
+                padding: 0 1rem;
+            }
 
             .swiper-pagination-bullet {
+                scroll-margin-left: 1rem;
                 box-sizing: border-box;
                 flex-shrink: 0;
                 width: 44px;
@@ -87,64 +95,101 @@ body {
                 background-position: center center;
                 border-radius: 0;
                 opacity: 1;
-                border: 1px solid transparent;
+                border: 2px solid transparent;
                 background-size: cover;
-            }
-
-            .wiper-pagination-bullet-active {
-                border: 1px solid #008bd2;
-                background: none;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                &.swiper-pagination-bullet-active {
+                    background-color: #fff;
+                    border: 2px solid #008bd2;
+                }
             }
         }
     }
 
-    .overlay-slider {
+    &.overlay {
         position: fixed;
         top: 0;
-        right: 0;
-        z-index: 100;
-        width: 100vw;
-        height: calc(var(--vh, 1vh) * 100);
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1;
         display: flex;
         flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        background: #fff;
-        overflow: hidden;
-    }
-
-    .close {
-        display: inline-block;
-        z-index: 101;
-        background: transparent;
-        position: absolute;
-        top: 2rem;
-        right: 2rem;
-        border:0;
-        padding: 0;
-        color: #707070;
-        svg {
-            width: 24px;
-            height: 24px;
-        }
-    }
-
-    .pinch-icon {
-        display: flex;
-        z-index: 101;
         justify-content: center;
         align-items: center;
-        position: absolute;
-        right: 2rem;
-        bottom: 8rem;
-        width: 40px;
-        height: 40px;
-        border-radius: 100%;
-        background: #E6E6E6;
-        svg {
-            width: 20px;
-            height: 20px;
-            color: #707070;
+
+        .dialog {
+            border-radius: 0.5rem;
+            z-index: 10;
+            background: #fff;
+            max-width: 1280px;
+            width: 100%;
+            height: 80vh;
+            position: relative;
+            overflow: hidden;
+            padding: 1rem;
+            filter: drop-shadow(0 10px 8px rgb(0 0 0 / 0.04)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.1));
+
+            .swiper {
+
+                .swiper-slide {
+                    height: 100%;
+                }
+
+                .swiper-pagination {
+                    justify-content: center;
+                }
+
+            }
+
+            @media screen and (max-width: 768px) {
+                padding: 0;
+                width: 100vw;
+                height: calc(var(--vh, 1vh) * 100);
+                border-radius: 0;
+            }
+
+            .close {
+                display: inline-block;
+                z-index: 101;
+                background: transparent;
+                position: absolute;
+                top: 1rem;
+                right: 1rem;
+                border:0;
+                padding: 0;
+                color: #707070;
+                cursor: pointer;
+                svg {
+                    width: 36px;
+                    height: 36px;
+                }
+            }
+
+            .pinch-icon {
+                display: none;
+                z-index: 101;
+                justify-content: center;
+                align-items: center;
+                position: absolute;
+                right: 2rem;
+                bottom: 8rem;
+                width: 40px;
+                height: 40px;
+                border-radius: 100%;
+                background: #E6E6E6;
+                svg {
+                    width: 20px;
+                    height: 20px;
+                    color: #707070;
+                }
+                @media screen and (max-width: 768px) {
+                    display: flex;
+                }
+            }
         }
     }
 }
