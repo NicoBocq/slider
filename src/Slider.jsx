@@ -15,22 +15,15 @@ SwiperCore.use([Lazy, Zoom, Pagination, Navigation, Keyboard])
 
 export default function Slider ({ items }) {
   const [isOverlay, setOverlay] = useState(false)
-  const [allow, setAllow] = useState({ slideNext: true, slidePrev: true })
+  const [isZoomed, setZoom] = useState(false)
   const sliderRef = useRef(null)
 
   const toggleOverlay = () => {
     setOverlay(!isOverlay)
   }
 
-  const allowSwipe = (e) => {
-    // todo condition zob
-    if (e.zoom.scale !== 3) {
-      console.log('disallow swipe')
-      setAllow({ slideNext: false, slidePrev: false })
-    } else {
-      console.log('allow swipe')
-      setAllow({ slideNext: true, slidePrev: true })
-    }
+  const watchZoom = (e) => {
+    setZoom(e.zoom.scale < 3)
   }
 
   const imgKey = useMemo(() => {
@@ -48,8 +41,33 @@ export default function Slider ({ items }) {
     toggleOverlay()
   }
 
-  const isIdVideo = (item) => {
-    return items
+  // const isIdVideo = (item) => {
+  //   return items
+  // }
+
+  const Close = () => {
+    if (!isOverlay) return null
+    return (
+      <button onClick={() => onClose()} className="close">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    )
+  }
+
+  const PinchIcon = () => {
+    if (!isOverlay || isZoomed) return null
+    return (
+      <div className="pinch-icon">
+        <span>Appuyez 2 fois ou pincez pour zoomer</span>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+             stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>
+        </svg>
+      </div>
+    )
   }
 
   const pagination = {
@@ -69,23 +87,8 @@ export default function Slider ({ items }) {
     <>
       <div className={`alltricks-slider ${isOverlay ? 'overlay' : ''}`}>
         <div className={ isOverlay ? 'dialog' : 'default'}>
-          {isOverlay && (
-            <>
-              <button onClick={() => onClose()} className="close">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-              <div className="pinch-icon">
-                <span>Appuyez 2 fois ou pincez pour zoomer</span>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>
-                </svg>
-              </div>
-            </>
-          )}
+          <Close />
+          <PinchIcon />
           <Swiper
             spaceBetween={0}
             ref={sliderRef}
@@ -97,11 +100,11 @@ export default function Slider ({ items }) {
             keyboard={{
               enabled: true
             }}
-            allowSlideNext={allow.slideNext}
-            allowSlidePrev={allow.slidePrev}
+            allowSlideNext={!isZoomed}
+            allowSlidePrev={!isZoomed}
             pagination={pagination}
             navigation={true}
-            onZoomChange={(e) => allowSwipe(e)}
+            onZoomChange={(e) => watchZoom(e)}
           >
             {items.map((item, index) => (
               <SwiperSlide key={index}>
@@ -115,15 +118,14 @@ export default function Slider ({ items }) {
                     <>
                       <div className="swiper-zoom-container">
                         <img
-                          data-src={item.url}
-                          data-srcset={item.url_hd}
+                          data-src={item[imgKey]}
                           alt=""
                           onClick={() => onClickImage()}
                           className="swiper-lazy"
                           key={'image' + index}
                         />
+                        <div className="swiper-lazy-preloader"/>
                       </div>
-                      <div className="swiper-lazy-preloader swiper-lazy-preloader-white"/>
                     </>
                     )
                 }
@@ -131,7 +133,7 @@ export default function Slider ({ items }) {
             ))}
           </Swiper>
           </div>
-        </div>
+      </div>
     </>
   )
 }
