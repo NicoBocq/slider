@@ -51,10 +51,10 @@ export default function Slider ({ items }) {
     )
   }
 
-  const overlayAnimation = useSpring(() => ({
-    transform: isOverlay ? 'translate3d(0,0%,0)' : 'translate3d(0,-85%,0)',
+  const overlayAnimation = useSpring({
+    transform: isOverlay ? 'scale(1)' : 'scale(0.5)',
     opacity: isOverlay ? 1 : 0
-  }))
+  })
 
   const PinchIcon = () => {
     if (!isOverlay || isZoomed) return null
@@ -135,7 +135,7 @@ export default function Slider ({ items }) {
           {thumbItems}
         </Swiper>
           <div className="overlay" style={{ display: isOverlay ? 'flex' : 'none' }}>
-            <animated.div className="dialog" style={{ overlayAnimation }}>
+            <animated.div className="dialog" style={overlayAnimation}>
               <Close />
               <PinchIcon />
               <Swiper
@@ -185,13 +185,15 @@ export default function Slider ({ items }) {
                   </SwiperSlide>
                 ))}
               </Swiper>
-              <Swiper
-                spaceBetween={10}
-                slidesPerView='auto'
-                onSwiper={setThumbsSwiperOverlay}
-              >
-                {thumbItems}
-              </Swiper>
+              <div className="thumbs">
+                <Swiper
+                  spaceBetween={10}
+                  slidesPerView='auto'
+                  onSwiper={setThumbsSwiperOverlay}
+                >
+                  {thumbItems}
+                </Swiper>
+              </div>
             </animated.div>
           </div>
       </div>

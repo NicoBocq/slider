@@ -61,6 +61,10 @@ body {
     }
 }
 .swiper {
+    .swiper-slide {
+        // fix the default height of the component
+        height: 300px;
+    }
     @media screen and (max-width: 768px) {
         .swiper-button-prev, .swiper-button-next {
             display: none;
@@ -100,18 +104,18 @@ body {
         }
 
         .swiper {
+            .swiper-slide {
+                //height: 100%;
+            }
             .swiper-wrapper {
-                align-content: center;
-                height: 100%;
+                //align-content: center;
+                //height: 100%;
             }
         }
 
-        .swiper-thumbs {
-            bottom: 1rem;
-        }
-
-        .swiper-slide {
-            height: 100%;
+        .thumbs {
+            //position: absolute;
+            //bottom: 1rem;
         }
 
         .close {
