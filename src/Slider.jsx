@@ -29,7 +29,8 @@ export default function Slider ({ items }) {
   }
 
   const watchZoom = (e) => {
-    setZoom(e.zoom.scale < 3)
+    // get the scale when the event is triggered
+    setZoom(e.zoom.scale === 1)
   }
 
   const onClose = (e) => {
@@ -77,7 +78,13 @@ export default function Slider ({ items }) {
   useEffect(() => {
     // todo : moche
     setHeightDialog(dialogRef.current.clientHeight)
-  })
+    if (isOverlay) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+    // console.log(swiperOverlay)
+  }, [isOverlay, dialogRef])
 
   // const styleHeight = useMemo(() => {
   //   // get height of dialoag ref
@@ -122,6 +129,8 @@ export default function Slider ({ items }) {
                     <iframe
                       className="mfp-iframe"
                       src="//www.youtube.com/embed/pQNnjuYQVtg?autoplay=1&amp;mute=1&amp;rel=0"
+                      height="350px"
+                      width="100%"
                       frameBorder="0"
                       allowFullScreen="">
                     </iframe>
@@ -160,7 +169,7 @@ export default function Slider ({ items }) {
                 onSwiper={setSwiperOverlay}
                 spaceBetween={0}
                 slidesPerView={1}
-                controller={ { control: swiper } }
+                controller={{ control: swiper }}
                 thumbs={{ swiper: thumbsSwiperOverlay }}
                 loop
                 zoom
@@ -178,9 +187,11 @@ export default function Slider ({ items }) {
                         <div className="video-container">
                           <iframe
                             className="mfp-iframe"
+                            height={`${heightDialog - 85}px`}
+                            width="100%"
                             src="//www.youtube.com/embed/pQNnjuYQVtg?autoplay=1&amp;mute=1&amp;rel=0"
                             frameBorder="0"
-                            allowFullScreen="">
+                            allowFullScreen>
                           </iframe>
                         </div>
                         )

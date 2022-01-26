@@ -5,11 +5,12 @@ export default [
     url: 'https://media.alltricks.com/medium/209827460e6bf66c79722.43235957.jpg',
     url_thumb: 'https://media.alltricks.com/thumb/209827460e6bf66c79722.43235957.jpg'
   },
-  // {
-  //   id: 13,
-  //   vid: 'https://www.youtube.com/watch?v=pQNnjuYQVtg&t=1s',
-  //   url_thumb: 'https://img.youtube.com/vi/pQNnjuYQVtg/mqdefault.jpg'
-  // },
+  {
+    id: 13,
+    vid: 'https://www.youtube.com/watch?v=pQNnjuYQVtg&t=1s',
+    url_thumb: 'https://img.youtube.com/vi/pQNnjuYQVtg/mqdefault.jpg',
+    url_hd: 'https://img.youtube.com/vi/pQNnjuYQVtg/maxresdefault.jpg'
+  },
   {
     id: 2,
     url_hd: 'https://media.alltricks.com/hd/209827460e6bf6a6f2e58.16046081.jpg',
