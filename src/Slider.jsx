@@ -205,15 +205,15 @@ export default function Slider ({ items }) {
                   </SwiperSlide>
                 ))}
               </Swiper>
-              <div className="thumbs">
-                <Swiper
-                  spaceBetween={10}
-                  slidesPerView='auto'
-                  onSwiper={setThumbsSwiperOverlay}
-                >
-                  {thumbItems}
-                </Swiper>
-              </div>
+              <Swiper
+                spaceBetween={10}
+                slidesPerView='auto'
+                onSwiper={setThumbsSwiperOverlay}
+                // slideToClickedSlide={true}
+                // centeredSlides={true}
+              >
+                {thumbItems}
+              </Swiper>
             </animated.div>
           </div>
       </div>
