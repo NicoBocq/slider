@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { animated, useSpring } from 'react-spring'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import './styles.scss'
@@ -21,6 +21,8 @@ export default function Slider ({ items }) {
   const [thumbsSwiperOverlay, setThumbsSwiperOverlay] = useState(null)
   const [isOverlay, setOverlay] = useState(false)
   const [isZoomed, setZoom] = useState(false)
+  const dialogRef = useRef(null)
+  const [heightDialog, setHeightDialog] = useState(0)
 
   const toggleOverlay = () => {
     setOverlay(!isOverlay)
@@ -30,9 +32,11 @@ export default function Slider ({ items }) {
     setZoom(e.zoom.scale < 3)
   }
 
-  const onClose = () => {
+  const onClose = (e) => {
+    // e.stopPropagation()
     toggleOverlay()
-    swiperOverlay.zoom.out()
+    // reset zoom
+    isOverlay && swiperOverlay.zoom.out()
   }
 
   const onClickImage = (id) => {
@@ -43,7 +47,7 @@ export default function Slider ({ items }) {
   const Close = () => {
     if (!isOverlay) return null
     return (
-      <button onClick={() => onClose()} className="close">
+      <button onClick={(e) => onClose(e)} className="close">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
         </svg>
@@ -70,6 +74,22 @@ export default function Slider ({ items }) {
     )
   }
 
+  useEffect(() => {
+    setHeightDialog(dialogRef.current.clientHeight)
+  })
+
+  // const styleHeight = useMemo(() => {
+  //   // get height of dialoag ref
+  //   let height = 0
+  //   if (dialogRef.current) {
+  //     height = dialogRef.current.clientHeight
+  //   }
+  //   console.log(height)
+  //   return {
+  //     height: `${height}px`
+  //   }
+  // }, [isOverlay, dialogRef])
+
   const thumbItems = []
   for (const item of items) {
     thumbItems.push(
@@ -86,7 +106,7 @@ export default function Slider ({ items }) {
           slidesPerView={1}
           thumbs={{ swiper: thumbsSwiper }}
           controller={{ control: swiperOverlay }}
-          loop={true}
+          loop
           zoom={false}
           lazy={true}
           preventInteractionOnTransition={true}
@@ -135,7 +155,7 @@ export default function Slider ({ items }) {
           {thumbItems}
         </Swiper>
           <div className="overlay" style={{ display: isOverlay ? 'flex' : 'none' }}>
-            <animated.div className="dialog" style={overlayAnimation}>
+            <animated.div className="dialog" style={overlayAnimation} ref={dialogRef}>
               <Close />
               <PinchIcon />
               <Swiper
@@ -144,20 +164,20 @@ export default function Slider ({ items }) {
                 slidesPerView={1}
                 controller={ { control: swiper } }
                 thumbs={{ swiper: thumbsSwiperOverlay }}
-                loop={true}
-                zoom={true}
-                lazy={true}
+                loop
+                zoom
+                lazy
                 allowSlideNext={!isZoomed}
                 allowSlidePrev={!isZoomed}
-                preventInteractionOnTransition={true}
+                preventInteractionOnTransition
                 keyboard={{
                   enabled: true
                 }}
-                navigation={true}
+                navigation
                 onZoomChange={(e) => watchZoom(e)}
               >
                 {items.map((item, index) => (
-                  <SwiperSlide key={ index }>
+                  <SwiperSlide key={ index } style={{ height: `${heightDialog - 80}px` }}>
                     {item.vid
                       ? (
                         <div className="video-container">
