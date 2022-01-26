@@ -1,22 +1,26 @@
-import React, { useRef, useCallback, useState, useEffect, useMemo } from 'react'
+import React, { useState } from 'react'
 import { animated, useSpring } from 'react-spring'
 import { Swiper, SwiperSlide } from 'swiper/react'
-
+import './styles.scss'
+import 'swiper/css/bundle'
 import 'swiper/css'
 import 'swiper/css/pagination'
 import 'swiper/css/navigation'
 import 'swiper/css/zoom'
 import 'swiper/css/effect-fade'
 import SwiperCore, {
-  Lazy, Zoom, Pagination, Navigation, Keyboard
+  Lazy, Zoom, Pagination, Navigation, Keyboard, Controller, Thumbs
 } from 'swiper'
 
-SwiperCore.use([Lazy, Zoom, Pagination, Navigation, Keyboard])
+SwiperCore.use([Lazy, Zoom, Pagination, Navigation, Keyboard, Controller, Thumbs])
 
 export default function Slider ({ items }) {
+  const [swiper, setSwiper] = useState(null)
+  const [swiperOverlay, setSwiperOverlay] = useState(null)
+  const [thumbsSwiper, setThumbsSwiper] = useState(null)
+  const [thumbsSwiperOverlay, setThumbsSwiperOverlay] = useState(null)
   const [isOverlay, setOverlay] = useState(false)
   const [isZoomed, setZoom] = useState(false)
-  const sliderRef = useRef(null)
 
   const toggleOverlay = () => {
     setOverlay(!isOverlay)
@@ -26,24 +30,15 @@ export default function Slider ({ items }) {
     setZoom(e.zoom.scale < 3)
   }
 
-  const imgKey = useMemo(() => {
-    return isOverlay ? 'url_hd' : 'url'
-  }, [isOverlay])
-
   const onClose = () => {
-    if (!isOverlay) return
-    setOverlay(false)
-    sliderRef.current.swiper.zoom.out()
+    toggleOverlay()
+    swiperOverlay.zoom.out()
   }
 
-  const onClickImage = () => {
+  const onClickImage = (id) => {
     if (isOverlay) return
     toggleOverlay()
   }
-
-  // const isIdVideo = (item) => {
-  //   return items
-  // }
 
   const Close = () => {
     if (!isOverlay) return null
@@ -55,6 +50,11 @@ export default function Slider ({ items }) {
       </button>
     )
   }
+
+  const overlayAnimation = useSpring(() => ({
+    transform: isOverlay ? 'translate3d(0,0%,0)' : 'translate3d(0,-85%,0)',
+    opacity: isOverlay ? 1 : 0
+  }))
 
   const PinchIcon = () => {
     if (!isOverlay || isZoomed) return null
@@ -70,68 +70,129 @@ export default function Slider ({ items }) {
     )
   }
 
-  const pagination = {
-    clickable: true,
-    renderBullet: function (index, className) {
-      // if (isOverlay) {
-      //   return `<span class="${className}"></span>`
-      // } else {
-      return `<div class="${className}" style="background-image:url(${items[index].url_thumb})">
-<!--        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 9.2"><defs><style>.cls-1{fill:#188acb;}</style></defs><g id="Calque_2" data-name="Calque 2"><g id="Calque_1-2" data-name="Calque 1"><path id="camera-video-avec-bouton-de-lecture" class="cls-1" d="M15.3.6a1.06,1.06,0,0,0-1.2.2l-2,2.1V1.6A1.58,1.58,0,0,0,10.5,0H1.6A1.64,1.64,0,0,0,0,1.6v6A1.58,1.58,0,0,0,1.6,9.2h8.9a1.58,1.58,0,0,0,1.6-1.6V6.4l2,2.1a1.06,1.06,0,0,0,1.2.2,1.2,1.2,0,0,0,.7-1V1.6A1.2,1.2,0,0,0,15.3.6ZM7.6,5.1,5.4,6.8a.45.45,0,0,1-.5,0c-.2-.1-.3-.2-.3-.4V2.9a.55.55,0,0,1,.3-.5.47.47,0,0,1,.6.1L7.7,4.2a.77.77,0,0,1-.1.9c.1-.1,0-.1,0,0Z"/></g></g></svg>-->
-      </div>`
-      // }
-    }
+  const thumbItems = []
+  for (const item of items) {
+    thumbItems.push(
+      <SwiperSlide key={`thumb-${item.id}`} tag="div" style={{ backgroundImage: `url(${item.url_thumb}`, height: '48px', width: '48px', backgroundSize: 'cover', backgroundPosition: 'center' }} />
+    )
   }
 
   return (
     <>
-      <div className={`alltricks-slider ${isOverlay ? 'overlay' : ''}`}>
-        <div className={ isOverlay ? 'dialog' : 'default'}>
-          <Close />
-          <PinchIcon />
-          <Swiper
-            spaceBetween={0}
-            ref={sliderRef}
-            slidesPerView={1}
-            loop={true}
-            zoom={true}
-            lazy={true}
-            preventInteractionOnTransition={true}
-            keyboard={{
-              enabled: true
-            }}
-            allowSlideNext={!isZoomed}
-            allowSlidePrev={!isZoomed}
-            pagination={pagination}
-            navigation={true}
-            onZoomChange={(e) => watchZoom(e)}
-          >
-            {items.map((item, index) => (
-              <SwiperSlide key={index}>
-                {item.vid
-                  ? (
-                    <div className="video-container">
-                      <div className="yt-player" data-id="pQNnjuYQVtg"></div>
+      <div className="alltricks-slider">
+        <Swiper
+          onSwiper={setSwiper}
+          spaceBetween={0}
+          slidesPerView={1}
+          thumbs={{ swiper: thumbsSwiper }}
+          controller={{ control: swiperOverlay }}
+          loop={true}
+          zoom={false}
+          lazy={true}
+          preventInteractionOnTransition={true}
+          keyboard={{
+            enabled: true
+          }}
+          navigation={true}
+          onZoomChange={(e) => watchZoom(e)}
+        >
+          {items.map((item, index) => (
+            <SwiperSlide key={ index }>
+              {item.vid
+                ? (
+                  <div className="video-container">
+                    <iframe
+                      className="mfp-iframe"
+                      src="//www.youtube.com/embed/pQNnjuYQVtg?autoplay=1&amp;mute=1&amp;rel=0"
+                      frameBorder="0"
+                      allowFullScreen="">
+                    </iframe>
+                  </div>
+                  )
+                : (
+                  <>
+                    <div className="swiper-zoom-container">
+                      <img
+                        data-src={item.url}
+                        alt=""
+                        onClick={() => onClickImage(index)}
+                        className="swiper-lazy"
+                      />
+                      <div className="swiper-lazy-preloader"/>
                     </div>
-                    )
-                  : (
-                    <>
-                      <div className="swiper-zoom-container">
-                        <img
-                          data-src={item[imgKey]}
-                          alt=""
-                          onClick={() => onClickImage()}
-                          className="swiper-lazy"
-                          key={'image' + index}
-                        />
-                        <div className="swiper-lazy-preloader"/>
-                      </div>
-                    </>
-                    )
-                }
-              </SwiperSlide>
-            ))}
-          </Swiper>
+                  </>
+                  )
+              }
+            </SwiperSlide>
+          ))}
+        </Swiper>
+        <Swiper
+          id="thumbs"
+          spaceBetween={10}
+          slidesPerView='auto'
+          onSwiper={setThumbsSwiper}
+        >
+          {thumbItems}
+        </Swiper>
+          <div className="overlay" style={{ display: isOverlay ? 'flex' : 'none' }}>
+            <animated.div className="dialog" style={{ overlayAnimation }}>
+              <Close />
+              <PinchIcon />
+              <Swiper
+                onSwiper={setSwiperOverlay}
+                spaceBetween={0}
+                slidesPerView={1}
+                controller={ { control: swiper } }
+                thumbs={{ swiper: thumbsSwiperOverlay }}
+                loop={true}
+                zoom={true}
+                lazy={true}
+                allowSlideNext={!isZoomed}
+                allowSlidePrev={!isZoomed}
+                preventInteractionOnTransition={true}
+                keyboard={{
+                  enabled: true
+                }}
+                navigation={true}
+                onZoomChange={(e) => watchZoom(e)}
+              >
+                {items.map((item, index) => (
+                  <SwiperSlide key={ index }>
+                    {item.vid
+                      ? (
+                        <div className="video-container">
+                          <iframe
+                            className="mfp-iframe"
+                            src="//www.youtube.com/embed/pQNnjuYQVtg?autoplay=1&amp;mute=1&amp;rel=0"
+                            frameBorder="0"
+                            allowFullScreen="">
+                          </iframe>
+                        </div>
+                        )
+                      : (
+                        <>
+                          <div className="swiper-zoom-container">
+                            <img
+                              data-src={item.url_hd}
+                              alt=""
+                              className="swiper-lazy"
+                            />
+                            <div className="swiper-lazy-preloader"/>
+                          </div>
+                        </>
+                        )
+                    }
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+              <Swiper
+                spaceBetween={10}
+                slidesPerView='auto'
+                onSwiper={setThumbsSwiperOverlay}
+              >
+                {thumbItems}
+              </Swiper>
+            </animated.div>
           </div>
       </div>
     </>
