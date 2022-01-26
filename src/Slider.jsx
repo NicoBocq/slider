@@ -9,10 +9,10 @@ import 'swiper/css/navigation'
 import 'swiper/css/zoom'
 import 'swiper/css/effect-fade'
 import SwiperCore, {
-  Lazy, Zoom, Pagination, Navigation, Keyboard, Controller, Thumbs
+  Lazy, Zoom, Pagination, Navigation, Controller, Thumbs
 } from 'swiper'
 
-SwiperCore.use([Lazy, Zoom, Pagination, Navigation, Keyboard, Controller, Thumbs])
+SwiperCore.use([Lazy, Zoom, Pagination, Navigation, Controller, Thumbs])
 
 export default function Slider ({ items }) {
   const [swiper, setSwiper] = useState(null)
@@ -75,6 +75,7 @@ export default function Slider ({ items }) {
   }
 
   useEffect(() => {
+    // todo : moche
     setHeightDialog(dialogRef.current.clientHeight)
   })
 
@@ -110,9 +111,6 @@ export default function Slider ({ items }) {
           zoom={false}
           lazy={true}
           preventInteractionOnTransition={true}
-          keyboard={{
-            enabled: true
-          }}
           navigation={true}
           onZoomChange={(e) => watchZoom(e)}
         >
@@ -170,14 +168,11 @@ export default function Slider ({ items }) {
                 allowSlideNext={!isZoomed}
                 allowSlidePrev={!isZoomed}
                 preventInteractionOnTransition
-                keyboard={{
-                  enabled: true
-                }}
-                navigation
+                navigation={!isZoomed}
                 onZoomChange={(e) => watchZoom(e)}
               >
                 {items.map((item, index) => (
-                  <SwiperSlide key={ index } style={{ height: `${heightDialog - 80}px` }}>
+                  <SwiperSlide key={ index } style={{ height: isZoomed ? heightDialog : `${heightDialog - 85}px` }}>
                     {item.vid
                       ? (
                         <div className="video-container">
@@ -209,8 +204,7 @@ export default function Slider ({ items }) {
                 spaceBetween={10}
                 slidesPerView='auto'
                 onSwiper={setThumbsSwiperOverlay}
-                // slideToClickedSlide={true}
-                // centeredSlides={true}
+                style={{ display: isZoomed ? 'none' : 'block' }}
               >
                 {thumbItems}
               </Swiper>

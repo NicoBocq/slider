@@ -51,7 +51,7 @@ body {
 }
 
 .swiper-thumbs {
-    margin-top: 8px;
+    margin-top: 10px;
     .swiper-slide  {
         cursor: pointer;
         border: 2px solid transparent;
@@ -62,7 +62,7 @@ body {
 }
 .swiper {
     .swiper-slide {
-        // fix the default height of the component
+        // set the height of the slider component
         height: 300px;
     }
     @media screen and (max-width: 768px) {
@@ -78,15 +78,6 @@ body {
 //    object-fit: cover;
 //    object-position: center;
 //}
-.swiper-thumbs {
-    .swiper-wrapper {
-        justify-content: center;
-        @media screen and (max-width: 768px) {
-            justify-content: flex-start;
-        }
-    }
-}
-
 
 .overlay {
     position: fixed;
@@ -122,6 +113,15 @@ body {
             width: 100vw;
             height: calc(var(--vh, 1vh) * 100);
             border-radius: 0;
+        }
+
+        .swiper-thumbs {
+            .swiper-wrapper {
+                justify-content: center;
+                @media screen and (max-width: 768px) {
+                    justify-content: flex-start;
+                }
+            }
         }
 
         .close {
