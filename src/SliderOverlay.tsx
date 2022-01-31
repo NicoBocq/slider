@@ -121,10 +121,7 @@ export default function SliderOverlay({
           thumbs={{ swiper: thumbsSwiper }}
         >
           {items.map(({ name, hd, filename }, index) => (
-            <SwiperSlide
-              key={'slider-overlay-' + index}
-              style={{ height: isZoomed ? heightDialog : `${heightDialog - 85}px` }}
-            >
+            <SwiperSlide key={'slider-overlay-' + index}>
               <div className="swiper-zoom-container">
                 <img data-src={hd + filename} alt={name} className="swiper-lazy" />
                 <div className="swiper-lazy-preloader" />

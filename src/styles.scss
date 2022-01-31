@@ -238,6 +238,14 @@ body {
       border-radius: 0;
     }
 
+    .swiper {
+      height: 100%;
+
+      .swiper-slide {
+        height: 100%;
+      }
+    }
+
     .swiper-thumbs {
       .swiper-wrapper {
         justify-content: center;
