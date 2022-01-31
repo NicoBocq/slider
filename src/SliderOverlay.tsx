@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useMemo } from 'react';
+import React, {useEffect, useRef, useState, useMemo, SyntheticEvent} from 'react';
 import { animated, useSpring } from 'react-spring';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import './styles.scss';
@@ -33,7 +33,6 @@ const PinchIcon = () => {
 
 type PinchIndicatorProps = {
   isZoomed: boolean;
-  scale?: number;
 };
 
 const PinchIndicator: React.FC<PinchIndicatorProps> = ({ isZoomed }) => {
@@ -42,7 +41,6 @@ const PinchIndicator: React.FC<PinchIndicatorProps> = ({ isZoomed }) => {
   return (
     <div className="pinch-icon">
       <span>Appuyez 2 fois ou pincez pour zoomer</span>
-
       <PinchIcon />
     </div>
   );
@@ -69,12 +67,14 @@ export default function SliderOverlay({
   const [thumbsSwiper, setThumbsSwiper] = useState<SwiperCore | undefined>();
 
   const onZoomChange = (swiperCore: SwiperCore) => {
-    const shouldZoom = swiperCore.zoom.scale !== 3;
-    setZoom(shouldZoom);
+    // onZoomChange return initial zoom value on desktop
+    // onDoubleClick return zoom value after double tap / click
+    const procZoom = swiperCore.zoom.scale !== 1;
+    setZoom(procZoom);
   };
 
   const handleOnClose = () => {
-    onClose();
+    onClose()
   };
 
   const slideHeight = useMemo(() => {
@@ -84,25 +84,47 @@ export default function SliderOverlay({
         // 20 : margin + spacing bottom
         height: isZoomed ? `${dialogHeight}px` : `${dialogHeight - thumbsHeight - 20}px`,
       }
-  }, [open, dialogRef, thumbsRef]);
+  }, [open, isZoomed, dialogRef, thumbsRef]);
 
   const overlayAnimation = useSpring({
     transform: open ? 'scale(1)' : 'scale(0.5)',
     opacity: open ? 1 : 0
   });
 
-  useEffect(() => {
+  const stopPropagation = (e: SyntheticEvent) => {
+    e.stopPropagation();
+  }
 
-    document.body.style.overflow = 'unset';
-  }, [dialogRef]);
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [open]);
+
+  useEffect(() => {
+    // no scroll on open dialog
+    if (open){
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+  }, [open]);
 
   if (!control) {
     return <></>;
   }
 
   return (
-    <div className={`overlay ${open ? 'visible' : ''}`}>
-      <animated.div className="dialog" style={overlayAnimation} ref={dialogRef}>
+    <div className={`overlay ${open ? 'visible' : ''}`} onClick={handleOnClose}>
+      <animated.div className="dialog" style={overlayAnimation} ref={dialogRef} onClick={stopPropagation}>
         <button onClick={handleOnClose} className="close">
           <CloseIcon />
         </button>
@@ -123,6 +145,7 @@ export default function SliderOverlay({
           controller={{ control }}
           onSwiper={setOverlaySwiper}
           onZoomChange={onZoomChange}
+          onDoubleClick={onZoomChange}
           thumbs={{ swiper: thumbsSwiper }}
         >
           {items.map(({ name, hd, filename }, index) => (
