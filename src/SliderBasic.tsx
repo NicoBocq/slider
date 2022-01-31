@@ -37,6 +37,7 @@ export default function SliderBasic({
   medium,
 }: SliderBasicProps): JSX.Element {
   const [swiper, setSwiper] = useState<SwiperCore | undefined>();
+  const [overlaySwiper, setOverlaySwiper] = useState<SwiperCore | undefined>();
   const [thumbsSwiper, setThumbsSwiper] = useState<SwiperCore | undefined>();
   const [isOverlay, setOverlay] = useState(false);
 
@@ -79,8 +80,11 @@ export default function SliderBasic({
           lazy
           navigation
           preventInteractionOnTransition
+          loopedSlides={items.length}
+          slidesPerView={1}
           modules={[Lazy, Pagination, Navigation, Controller, Thumbs]}
           onSwiper={setSwiper}
+          controller={{ control: overlaySwiper }}
           thumbs={{ swiper: thumbsSwiper }}
         >
           {items.map(({ name, medium, filename }, index) => (
@@ -88,7 +92,7 @@ export default function SliderBasic({
               <div className="swiper-zoom-container">
                 <img
                   data-src={medium + filename}
-                  alt={productName}
+                  alt={name}
                   onClick={onClickImage}
                   onKeyDown={onClickImage}
                   role="presentation"
@@ -103,7 +107,13 @@ export default function SliderBasic({
         <SwiperThumb setThumbsSwiper={setThumbsSwiper} items={items} />
       </div>
 
-      {isOverlay && swiper && thumbsSwiper && <SliderOverlay items={items} onClose={() => setOverlay(false)} />}
+      <SliderOverlay
+        open={isOverlay}
+        items={items}
+        control={swiper}
+        setOverlaySwiper={setOverlaySwiper}
+        onClose={() => setOverlay(false)}
+      />
     </>
   );
 }

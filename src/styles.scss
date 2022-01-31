@@ -213,6 +213,11 @@ body {
   justify-content: center;
   align-items: center;
   cursor: pointer;
+  visibility: hidden;
+
+  &.visible {
+    visibility: visible;
+  }
 
   .dialog {
     border-radius: 0.5rem;

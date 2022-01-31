@@ -49,11 +49,20 @@ const PinchIndicator: React.FC<PinchIndicatorProps> = ({ isZoomed }) => {
 };
 
 type SliderOverlayProps = {
+  open: boolean;
   items: Item[];
+  control?: SwiperCore;
+  setOverlaySwiper: (swiper: SwiperCore) => void;
   onClose: () => void;
 };
 
-export default function SliderOverlay({ items, onClose }: SliderOverlayProps): JSX.Element {
+export default function SliderOverlay({
+  open,
+  items,
+  control,
+  setOverlaySwiper,
+  onClose,
+}: SliderOverlayProps): JSX.Element {
   const [isZoomed, setZoom] = useState(false);
   const dialogRef = useRef<HTMLDivElement | null>(null);
   const [heightDialog, setHeightDialog] = useState(0);
@@ -82,45 +91,50 @@ export default function SliderOverlay({ items, onClose }: SliderOverlayProps): J
     document.body.style.overflow = 'unset';
   }, [dialogRef]);
 
+  if (!control) {
+    return <></>;
+  }
+
   return (
-    <div className="alltricks-slider">
-      <div className="overlay" style={{ display: 'flex' }}>
-        <animated.div className="dialog" style={overlayAnimation} ref={dialogRef}>
-          <button onClick={handleOnClose} className="close">
-            <CloseIcon />
-          </button>
+    <div className={`overlay ${open ? 'visible' : ''}`} style={{ display: 'flex' }}>
+      <animated.div className="dialog" style={overlayAnimation} ref={dialogRef}>
+        <button onClick={handleOnClose} className="close">
+          <CloseIcon />
+        </button>
 
-          <PinchIndicator isZoomed={isZoomed} />
+        <PinchIndicator isZoomed={isZoomed} />
 
-          <Swiper
-            zoom
-            loop
-            lazy
-            preventInteractionOnTransition
-            modules={[Lazy, Zoom, Pagination, Navigation, Controller, Thumbs]}
-            loopedSlides={items.length}
-            allowSlideNext={!isZoomed}
-            allowSlidePrev={!isZoomed}
-            navigation={!isZoomed}
-            onZoomChange={onZoomChange}
-            thumbs={{ swiper: thumbsSwiper }}
-          >
-            {items.map(({ name, hd, filename }, index) => (
-              <SwiperSlide
-                key={'slider-overlay-' + index}
-                style={{ height: isZoomed ? heightDialog : `${heightDialog - 85}px` }}
-              >
-                <div className="swiper-zoom-container">
-                  <img data-src={hd + filename} alt={name} className="swiper-lazy" />
-                  <div className="swiper-lazy-preloader" />
-                </div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
+        <Swiper
+          zoom
+          loop
+          lazy
+          preventInteractionOnTransition
+          modules={[Lazy, Zoom, Pagination, Navigation, Controller, Thumbs]}
+          loopedSlides={items.length}
+          slidesPerView={1}
+          allowSlideNext={!isZoomed}
+          allowSlidePrev={!isZoomed}
+          navigation={!isZoomed}
+          controller={{ control }}
+          onSwiper={setOverlaySwiper}
+          onZoomChange={onZoomChange}
+          thumbs={{ swiper: thumbsSwiper }}
+        >
+          {items.map(({ name, hd, filename }, index) => (
+            <SwiperSlide
+              key={'slider-overlay-' + index}
+              style={{ height: isZoomed ? heightDialog : `${heightDialog - 85}px` }}
+            >
+              <div className="swiper-zoom-container">
+                <img data-src={hd + filename} alt={name} className="swiper-lazy" />
+                <div className="swiper-lazy-preloader" />
+              </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
 
-          <SwiperThumb setThumbsSwiper={setThumbsSwiper} items={items} />
-        </animated.div>
-      </div>
+        <SwiperThumb setThumbsSwiper={setThumbsSwiper} items={items} />
+      </animated.div>
     </div>
   );
 }
