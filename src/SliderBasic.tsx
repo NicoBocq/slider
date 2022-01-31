@@ -6,7 +6,7 @@ import 'swiper/css/effect-fade';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/zoom';
-import SwiperCore, { Lazy, Zoom, Pagination, Navigation, Controller, Thumbs } from 'swiper';
+import SwiperCore, { Lazy, Pagination, Navigation, Controller, Thumbs } from 'swiper';
 import SwiperThumb from './SwiperThumb';
 import SliderOverlay from './SliderOverlay';
 
@@ -70,6 +70,11 @@ export default function SliderBasic({
     setOverlay(true);
   };
 
+  const onClose = () => {
+    setOverlay(false);
+    overlaySwiper?.zoom.out();
+  };
+
   if (items.length <= 0) return <></>;
 
   return (
@@ -112,7 +117,7 @@ export default function SliderBasic({
         items={items}
         control={swiper}
         setOverlaySwiper={setOverlaySwiper}
-        onClose={() => setOverlay(false)}
+        onClose={onClose}
       />
     </>
   );

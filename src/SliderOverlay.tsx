@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { animated, useSpring } from 'react-spring';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import './styles.scss';
@@ -65,12 +65,11 @@ export default function SliderOverlay({
 }: SliderOverlayProps): JSX.Element {
   const [isZoomed, setZoom] = useState(false);
   const dialogRef = useRef<HTMLDivElement | null>(null);
-  const [heightDialog, setHeightDialog] = useState(0);
+  const thumbsRef = useRef<HTMLDivElement | null>(null);
   const [thumbsSwiper, setThumbsSwiper] = useState<SwiperCore | undefined>();
 
   const onZoomChange = (swiperCore: SwiperCore) => {
     const shouldZoom = swiperCore.zoom.scale !== 3;
-
     setZoom(shouldZoom);
   };
 
@@ -78,15 +77,21 @@ export default function SliderOverlay({
     onClose();
   };
 
+  const slideHeight = useMemo(() => {
+    const dialogHeight = dialogRef.current?.clientHeight || 0;
+    const thumbsHeight = thumbsRef.current?.clientHeight || 0;
+      return {
+        // 20 : margin + spacing bottom
+        height: isZoomed ? `${dialogHeight}px` : `${dialogHeight - thumbsHeight - 20}px`,
+      }
+  }, [open, dialogRef, thumbsRef]);
+
   const overlayAnimation = useSpring({
-    transform: 'scale(1)',
-    opacity: 1,
+    transform: open ? 'scale(1)' : 'scale(0.5)',
+    opacity: open ? 1 : 0
   });
 
   useEffect(() => {
-    if (dialogRef.current) {
-      setHeightDialog(dialogRef.current.clientHeight);
-    }
 
     document.body.style.overflow = 'unset';
   }, [dialogRef]);
@@ -96,7 +101,7 @@ export default function SliderOverlay({
   }
 
   return (
-    <div className={`overlay ${open ? 'visible' : ''}`} style={{ display: 'flex' }}>
+    <div className={`overlay ${open ? 'visible' : ''}`}>
       <animated.div className="dialog" style={overlayAnimation} ref={dialogRef}>
         <button onClick={handleOnClose} className="close">
           <CloseIcon />
@@ -121,7 +126,7 @@ export default function SliderOverlay({
           thumbs={{ swiper: thumbsSwiper }}
         >
           {items.map(({ name, hd, filename }, index) => (
-            <SwiperSlide key={'slider-overlay-' + index}>
+            <SwiperSlide key={'slider-overlay-' + index} style={slideHeight}>
               <div className="swiper-zoom-container">
                 <img data-src={hd + filename} alt={name} className="swiper-lazy" />
                 <div className="swiper-lazy-preloader" />
@@ -129,8 +134,9 @@ export default function SliderOverlay({
             </SwiperSlide>
           ))}
         </Swiper>
-
-        <SwiperThumb setThumbsSwiper={setThumbsSwiper} items={items} />
+        <div ref={thumbsRef}>
+          <SwiperThumb setThumbsSwiper={setThumbsSwiper} items={items} />
+        </div>
       </animated.div>
     </div>
   );
