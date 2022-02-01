@@ -28,7 +28,7 @@ type SliderBasicProps = {
   hd: string;
 };
 
-export default function SliderBasic({
+export default function Slider({
   pictures,
   productName,
   videos,
@@ -74,6 +74,13 @@ export default function SliderBasic({
     setOverlay(false);
     overlaySwiper?.zoom.out();
   };
+
+  const appHeight = () => {
+    const vh = window.innerHeight * 0.01
+    document.documentElement.style.setProperty('--vh', `${vh}px`)
+  }
+  window.addEventListener('load', appHeight)
+  window.addEventListener('resize', appHeight)
 
   if (items.length <= 0) return <></>;
 

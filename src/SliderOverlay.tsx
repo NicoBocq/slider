@@ -7,10 +7,12 @@ import 'swiper/css/effect-fade';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/zoom';
+import Portal from './Portal';
 
 import SwiperCore, { Lazy, Zoom, Pagination, Navigation, Controller, Thumbs } from 'swiper';
 import SwiperThumb from './SwiperThumb';
-import { Item } from './SliderBasic';
+import { Item } from './Slider';
+import ReactDOM from 'react-dom';
 
 const CloseIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -54,13 +56,13 @@ type SliderOverlayProps = {
   onClose: () => void;
 };
 
-export default function SliderOverlay({
+const SliderOverlay = ({
   open,
   items,
   control,
   setOverlaySwiper,
   onClose,
-}: SliderOverlayProps): JSX.Element {
+}: SliderOverlayProps): JSX.Element => {
   const [isZoomed, setZoom] = useState(false);
   const dialogRef = useRef<HTMLDivElement | null>(null);
   const thumbsRef = useRef<HTMLDivElement | null>(null);
@@ -69,6 +71,7 @@ export default function SliderOverlay({
   const onZoomChange = (swiperCore: SwiperCore) => {
     // onZoomChange return initial zoom value on desktop
     // onDoubleClick return zoom value after double tap / click
+    // onDoubleClick is fired last and set the right value
     const procZoom = swiperCore.zoom.scale !== 1;
     setZoom(procZoom);
   };
@@ -123,44 +126,48 @@ export default function SliderOverlay({
   }
 
   return (
-    <div className={`overlay ${open ? 'visible' : ''}`} onClick={handleOnClose}>
-      <animated.div className="dialog" style={overlayAnimation} ref={dialogRef} onClick={stopPropagation}>
-        <button onClick={handleOnClose} className="close">
-          <CloseIcon />
-        </button>
+      <Portal rootClass={'portal-overlay'}>
+        <div className={`overlay ${open ? 'visible' : ''}`} onClick={handleOnClose}>
+          <animated.div className="dialog" style={overlayAnimation} ref={dialogRef} onClick={stopPropagation}>
+            <button onClick={handleOnClose} className="close">
+              <CloseIcon />
+            </button>
 
-        <PinchIndicator isZoomed={isZoomed} />
+            <PinchIndicator isZoomed={isZoomed} />
 
-        <Swiper
-          zoom
-          loop
-          lazy
-          preventInteractionOnTransition
-          modules={[Lazy, Zoom, Pagination, Navigation, Controller, Thumbs]}
-          loopedSlides={items.length}
-          slidesPerView={1}
-          allowSlideNext={!isZoomed}
-          allowSlidePrev={!isZoomed}
-          navigation={!isZoomed}
-          controller={{ control }}
-          onSwiper={setOverlaySwiper}
-          onZoomChange={onZoomChange}
-          onDoubleClick={onZoomChange}
-          thumbs={{ swiper: thumbsSwiper }}
-        >
-          {items.map(({ name, hd, filename }, index) => (
-            <SwiperSlide key={'slider-overlay-' + index} style={slideHeight}>
-              <div className="swiper-zoom-container">
-                <img data-src={hd + filename} alt={name} className="swiper-lazy" />
-                <div className="swiper-lazy-preloader" />
-              </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
-        <div ref={thumbsRef}>
-          <SwiperThumb setThumbsSwiper={setThumbsSwiper} items={items} />
+            <Swiper
+              zoom
+              loop
+              lazy
+              preventInteractionOnTransition
+              modules={[Lazy, Zoom, Pagination, Navigation, Controller, Thumbs]}
+              loopedSlides={items.length}
+              slidesPerView={1}
+              allowSlideNext={!isZoomed}
+              allowSlidePrev={!isZoomed}
+              navigation={!isZoomed}
+              controller={{ control }}
+              onSwiper={setOverlaySwiper}
+              onZoomChange={onZoomChange}
+              onDoubleClick={onZoomChange}
+              thumbs={{ swiper: thumbsSwiper }}
+            >
+              {items.map(({ name, hd, filename }, index) => (
+                <SwiperSlide key={'slider-overlay-' + index} style={slideHeight}>
+                  <div className="swiper-zoom-container">
+                    <img data-src={hd + filename} alt={name} className="swiper-lazy" />
+                    <div className="swiper-lazy-preloader" />
+                  </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+            <div ref={thumbsRef}>
+              <SwiperThumb setThumbsSwiper={setThumbsSwiper} items={items} />
+            </div>
+          </animated.div>
         </div>
-      </animated.div>
-    </div>
+      </Portal>
   );
 }
+
+export default SliderOverlay;

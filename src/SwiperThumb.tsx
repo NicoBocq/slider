@@ -1,6 +1,6 @@
 import SwiperCore from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Item } from './SliderBasic';
+import { Item } from './Slider';
 
 type SliderThumbProps = {
   items: Item[];
