@@ -1,14 +1,15 @@
 import SwiperCore from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Item } from './Slider';
+import { Picture } from './Slider';
 import React from "react";
 
 type SliderThumbProps = {
-  items: Item[];
+  items: Picture[];
   setThumbsSwiper?: (swiper: SwiperCore) => void;
   control?: SwiperCore;
-  setOverlay: ({ active: boolean, isVideo: boolean }) => void;
-  isOverlay?: boolean;
+  setOverlay: (p: { isVideo: boolean; isActive: boolean }) => void;
+  overlay?: boolean;
+  isVideo: boolean
 };
 
 const VideoIcon = () => {
@@ -30,13 +31,13 @@ const VideoIcon = () => {
   )
 }
 
-const SwiperThumb: React.FC<SliderThumbProps> = ({ items, isOverlay= false, setThumbsSwiper, setOverlay, control }) => {
+const SwiperThumb: React.FC<SliderThumbProps> = ({ items, isVideo, overlay= false, setThumbsSwiper, setOverlay, control }) => {
   const onClick = () =>{
-    setOverlay({ active: true, isVideo: true });
+    setOverlay({ isActive: true, isVideo: true });
   }
   const onClickThumbs = () => {
-    if (!isOverlay) return
-    setOverlay({ active: true, isVideo: false });
+    if (!overlay) return
+    setOverlay({isActive: true, isVideo: true});
   }
   return (
     <div className="thumbs-custom">
@@ -47,23 +48,24 @@ const SwiperThumb: React.FC<SliderThumbProps> = ({ items, isOverlay= false, setT
         onSwiper={setThumbsSwiper}
         controller={{ control }}
       >
-        {items.map(({ filename, isVideo, thumb }, index) => (
+        {items.map(({ filename, thumb }, index) => (
           <SwiperSlide
             onClick={onClickThumbs}
             key={'thumb-' + index}
             style={{
-              backgroundImage: `url(${isVideo ? filename : thumb + filename})`
+              backgroundImage: `url(${thumb + filename})`
             }}
-          >
-          </SwiperSlide>
+          />
         ))}
       </Swiper>
-      <div className="video" onClick={onClick}>
-        <div>
-          <VideoIcon />
-          <span>Vidéo</span>
+      { isVideo && (
+        <div className="video" onClick={onClick}>
+          <div>
+            <VideoIcon />
+            <span>Vidéo</span>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

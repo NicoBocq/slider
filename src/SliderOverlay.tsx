@@ -11,7 +11,7 @@ import Portal from './Portal';
 
 import SwiperCore, { Lazy, Zoom, Pagination, Navigation, Controller, Thumbs } from 'swiper';
 import SwiperThumb from './SwiperThumb';
-import { Item } from './Slider';
+import { Picture, Overlay } from './Slider';
 import ReactDOM from 'react-dom';
 
 const CloseIcon = () => (
@@ -49,21 +49,28 @@ const PinchIndicator: React.FC<PinchIndicatorProps> = ({ isZoomed }) => {
 };
 
 type SliderOverlayProps = {
-  isOverlay: { active: boolean, isVideo: boolean };
-  items: Item[];
+  overlay: { isActive: boolean, isVideo: boolean };
+  items: Picture[];
   control?: SwiperCore;
   setOverlaySwiper: (swiper: SwiperCore) => void;
   onClose: () => void;
-  setOverlay: ({ active: boolean, isVideo: boolean }) => void;
+  setOverlay: (p: { isVideo: boolean; isActive: boolean }) => void;
+  isVideo: boolean;
+  video?: {
+    embed: string;
+    name: string;
+  };
 };
 
 const SliderOverlay = ({
-  isOverlay,
+  overlay,
   items,
   control,
   setOverlaySwiper,
   setOverlay,
   onClose,
+  isVideo,
+  video
 }: SliderOverlayProps): JSX.Element => {
   const [isZoomed, setZoom] = useState(false);
   const dialogRef = useRef<HTMLDivElement | null>(null);
@@ -85,11 +92,11 @@ const SliderOverlay = ({
         // 20 : margin + spacing bottom
         height: isZoomed ? `${dialogHeight}px` : `${dialogHeight - thumbsHeight - 58}px`,
       }
-  }, [isOverlay.active, isZoomed, dialogRef, thumbsRef]);
+  }, [overlay.isActive, isZoomed, dialogRef, thumbsRef]);
 
-  const overlayAnimation = useSpring({
-    transform: isOverlay.active ? 'scale(1)' : 'scale(0.5)',
-    opacity: isOverlay.active ? 1 : 0
+  const dialogAnimation = useSpring({
+    transform: overlay.isActive ? 'scale(1)' : 'scale(0.5)',
+    opacity: overlay.isActive ? 1 : 0
   });
 
   const stopPropagation = (e: SyntheticEvent) => {
@@ -108,43 +115,44 @@ const SliderOverlay = ({
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     }
-  }, [isOverlay.active]);
+  }, [overlay.isActive]);
 
   useEffect(() => {
-    // no scroll on isOverlay.active dialog
-    if (isOverlay.active){
+    // no scroll on overlay.isActive dialog
+    if (overlay.isActive){
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
     }
-  }, [isOverlay.active]);
+  }, [overlay.isActive]);
 
   if (!control) {
     return <></>;
   }
 
   return (
-        <div className={`overlay ${isOverlay.active ? 'visible' : ''}`} onClick={onClose}>
-          <animated.div className="dialog" style={{ ...overlayAnimation, padding: isZoomed ? '0' : '0' }} ref={dialogRef} onClick={stopPropagation}>
+        <div className={`overlay ${overlay.isActive && 'visible'}`} onClick={onClose}>
+          <animated.div className="dialog" style={{ ...dialogAnimation, padding: isZoomed ? '0' : '0' }} ref={dialogRef} onClick={stopPropagation}>
             <button onClick={onClose} className="close">
               <CloseIcon />
             </button>
 
             <PinchIndicator isZoomed={isZoomed} />
-
-            <div style={{ display: isOverlay.isVideo ? 'block' : 'none' }}>
-              <iframe
-                  className="mfp-iframe"
-                  src="https://www.youtube.com/embed/pQNnjuYQVtg"
-                  style={slideHeight}
-                  width="100%"
-                  title="video"
-                  frameBorder="0"
-                  allowFullScreen>
-              </iframe>
-            </div>
+            {isVideo && (
+                <div style={{ display: overlay.isVideo ? 'block' : 'none' }}>
+                  <iframe
+                      className="mfp-iframe"
+                      src={video?.embed}
+                      style={slideHeight}
+                      width="100%"
+                      title={video?.name}
+                      frameBorder="0"
+                      allowFullScreen
+                  />
+                </div>
+            )}
             <Swiper
-                style={{ display: !isOverlay.isVideo ? 'block' : 'none' }}
+                style={{ display: !overlay.isVideo ? 'block' : 'none' }}
                 zoom
                 loop
                 watchSlidesProgress
@@ -177,7 +185,7 @@ const SliderOverlay = ({
               ))}
             </Swiper>
             <div ref={thumbsRef}>
-              <SwiperThumb setThumbsSwiper={setThumbsSwiper} items={items} setOverlay={setOverlay} isOverlay />
+              <SwiperThumb setThumbsSwiper={setThumbsSwiper} items={items} setOverlay={setOverlay} overlay isVideo={isVideo} />
             </div>
           </animated.div>
         </div>
