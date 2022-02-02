@@ -17,12 +17,13 @@ export type Item = {
   hd: string;
   medium: string;
   filename: string;
+  embed?: string;
 };
 
 type SliderBasicProps = {
   pictures: string[];
   productName: string;
-  videos: string[];
+  videos: Array<{ picture: string, embedUrl: string }>;
   thumb: string;
   medium: string;
   hd: string;
@@ -39,25 +40,27 @@ export default function Slider({
   const [swiper, setSwiper] = useState<SwiperCore | undefined>();
   const [overlaySwiper, setOverlaySwiper] = useState<SwiperCore | undefined>();
   const [thumbsSwiper, setThumbsSwiper] = useState<SwiperCore | undefined>();
-  const [isOverlay, setOverlay] = useState(false);
+  const [isOverlay, setOverlay] = useState({ active: false, isVideo: false });
 
   const items = useMemo(() => {
+
     const allItems: Item[] = [];
-    const i: { isVideo: boolean; filename: string }[] = [];
+    const i: { isVideo: boolean; filename: string, embed?: string }[] = [];
 
     for (const picture of pictures) {
       i.push({
         isVideo: false,
-        filename: picture,
+        filename: picture
       });
     }
 
-    for (const video of videos) {
-      i.push({
-        isVideo: true,
-        filename: video,
-      });
-    }
+    // for (const video of videos) {
+    //   i.push({
+    //     isVideo: true,
+    //     filename: video.picture,
+    //     embed: video.embedUrl
+    //   });
+    // }
 
     for (const item of i) {
       allItems.push({ ...item, thumb, hd, medium, name: productName });
@@ -67,11 +70,11 @@ export default function Slider({
   }, [pictures, videos, thumb, hd, medium, productName]);
 
   const onClickImage = () => {
-    setOverlay(true);
+    setOverlay({active: true, isVideo: false });
   };
 
   const onClose = () => {
-    setOverlay(false);
+    setOverlay({active: false, isVideo: false });
     overlaySwiper?.zoom.out();
   };
 
@@ -89,7 +92,9 @@ export default function Slider({
       <div className="alltricks-slider">
         <Swiper
           loop
+          watchSlidesProgress
           lazy
+          preloadImages={false}
           navigation
           preventInteractionOnTransition
           loopedSlides={items.length}
@@ -99,8 +104,20 @@ export default function Slider({
           controller={{ control: overlaySwiper }}
           thumbs={{ swiper: thumbsSwiper }}
         >
-          {items.map(({ name, medium, filename }, index) => (
+          {items.map(({ name, isVideo, embed, medium, filename }, index) => (
             <SwiperSlide key={'slider-' + index}>
+              { isVideo ? (
+              <div className="video-container">
+                <iframe
+                    className="mfp-iframe"
+                    src={embed}
+                    height="300px"
+                    width="100%"
+                    frameBorder="0"
+                    allowFullScreen>
+                </iframe>
+              </div>
+              ) : (
               <div className="swiper-zoom-container">
                 <img
                   data-src={medium + filename}
@@ -112,19 +129,21 @@ export default function Slider({
                 />
                 <div className="swiper-lazy-preloader" />
               </div>
+              )}
             </SwiperSlide>
           ))}
         </Swiper>
 
-        <SwiperThumb setThumbsSwiper={setThumbsSwiper} items={items} />
+        <SwiperThumb setThumbsSwiper={setThumbsSwiper} items={items} setOverlay={setOverlay} />
       </div>
 
       <SliderOverlay
-        open={isOverlay}
         items={items}
         control={swiper}
         setOverlaySwiper={setOverlaySwiper}
         onClose={onClose}
+        isOverlay={isOverlay}
+        setOverlay={setOverlay}
       />
     </>
   );

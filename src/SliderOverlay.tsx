@@ -49,18 +49,20 @@ const PinchIndicator: React.FC<PinchIndicatorProps> = ({ isZoomed }) => {
 };
 
 type SliderOverlayProps = {
-  open: boolean;
+  isOverlay: { active: boolean, isVideo: boolean };
   items: Item[];
   control?: SwiperCore;
   setOverlaySwiper: (swiper: SwiperCore) => void;
   onClose: () => void;
+  setOverlay: ({ active: boolean, isVideo: boolean }) => void;
 };
 
 const SliderOverlay = ({
-  open,
+  isOverlay,
   items,
   control,
   setOverlaySwiper,
+  setOverlay,
   onClose,
 }: SliderOverlayProps): JSX.Element => {
   const [isZoomed, setZoom] = useState(false);
@@ -76,22 +78,18 @@ const SliderOverlay = ({
     setZoom(procZoom);
   };
 
-  const handleOnClose = () => {
-    onClose()
-  };
-
   const slideHeight = useMemo(() => {
     const dialogHeight = dialogRef.current?.clientHeight || 0;
     const thumbsHeight = thumbsRef.current?.clientHeight || 0;
       return {
         // 20 : margin + spacing bottom
-        height: isZoomed ? `${dialogHeight}px` : `${dialogHeight - thumbsHeight - 20}px`,
+        height: isZoomed ? `${dialogHeight}px` : `${dialogHeight - thumbsHeight - 58}px`,
       }
-  }, [open, isZoomed, dialogRef, thumbsRef]);
+  }, [isOverlay.active, isZoomed, dialogRef, thumbsRef]);
 
   const overlayAnimation = useSpring({
-    transform: open ? 'scale(1)' : 'scale(0.5)',
-    opacity: open ? 1 : 0
+    transform: isOverlay.active ? 'scale(1)' : 'scale(0.5)',
+    opacity: isOverlay.active ? 1 : 0
   });
 
   const stopPropagation = (e: SyntheticEvent) => {
@@ -110,63 +108,79 @@ const SliderOverlay = ({
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     }
-  }, [open]);
+  }, [isOverlay.active]);
 
   useEffect(() => {
-    // no scroll on open dialog
-    if (open){
+    // no scroll on isOverlay.active dialog
+    if (isOverlay.active){
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
     }
-  }, [open]);
+  }, [isOverlay.active]);
 
   if (!control) {
     return <></>;
   }
 
   return (
-      <Portal rootClass={'portal-overlay'}>
-        <div className={`overlay ${open ? 'visible' : ''}`} onClick={handleOnClose}>
-          <animated.div className="dialog" style={overlayAnimation} ref={dialogRef} onClick={stopPropagation}>
-            <button onClick={handleOnClose} className="close">
+        <div className={`overlay ${isOverlay.active ? 'visible' : ''}`} onClick={onClose}>
+          <animated.div className="dialog" style={{ ...overlayAnimation, padding: isZoomed ? '0' : '0' }} ref={dialogRef} onClick={stopPropagation}>
+            <button onClick={onClose} className="close">
               <CloseIcon />
             </button>
 
             <PinchIndicator isZoomed={isZoomed} />
 
+            <div style={{ display: isOverlay.isVideo ? 'block' : 'none' }}>
+              <iframe
+                  className="mfp-iframe"
+                  src="https://www.youtube.com/embed/pQNnjuYQVtg"
+                  style={slideHeight}
+                  width="100%"
+                  title="video"
+                  frameBorder="0"
+                  allowFullScreen>
+              </iframe>
+            </div>
             <Swiper
-              zoom
-              loop
-              lazy
-              preventInteractionOnTransition
-              modules={[Lazy, Zoom, Pagination, Navigation, Controller, Thumbs]}
-              loopedSlides={items.length}
-              slidesPerView={1}
-              allowSlideNext={!isZoomed}
-              allowSlidePrev={!isZoomed}
-              navigation={!isZoomed}
-              controller={{ control }}
-              onSwiper={setOverlaySwiper}
-              onZoomChange={onZoomChange}
-              onDoubleClick={onZoomChange}
-              thumbs={{ swiper: thumbsSwiper }}
+                style={{ display: !isOverlay.isVideo ? 'block' : 'none' }}
+                zoom
+                loop
+                watchSlidesProgress
+                lazy
+                preloadImages={false}
+                preventInteractionOnTransition
+                modules={[Lazy, Zoom, Pagination, Navigation, Controller, Thumbs]}
+                loopedSlides={items.length}
+                slidesPerView={1}
+                allowSlideNext={!isZoomed}
+                allowSlidePrev={!isZoomed}
+                navigation={!isZoomed}
+                controller={{ control }}
+                onSwiper={setOverlaySwiper}
+                onZoomChange={onZoomChange}
+                onDoubleClick={onZoomChange}
+                thumbs={{ swiper: thumbsSwiper }}
             >
               {items.map(({ name, hd, filename }, index) => (
-                <SwiperSlide key={'slider-overlay-' + index} style={slideHeight}>
-                  <div className="swiper-zoom-container">
-                    <img data-src={hd + filename} alt={name} className="swiper-lazy" />
-                    <div className="swiper-lazy-preloader" />
-                  </div>
-                </SwiperSlide>
+                  <SwiperSlide key={'slider-overlay-' + index} style={slideHeight}>
+                    <div className="swiper-zoom-container">
+                      <img
+                          data-src={hd + filename}
+                          alt={name}
+                          className="swiper-lazy"
+                      />
+                      <div className="swiper-lazy-preloader" />
+                    </div>
+                  </SwiperSlide>
               ))}
             </Swiper>
             <div ref={thumbsRef}>
-              <SwiperThumb setThumbsSwiper={setThumbsSwiper} items={items} />
+              <SwiperThumb setThumbsSwiper={setThumbsSwiper} items={items} setOverlay={setOverlay} isOverlay />
             </div>
           </animated.div>
         </div>
-      </Portal>
   );
 }
 

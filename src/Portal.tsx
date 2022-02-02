@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'
 
 type PortalProps = {
@@ -30,12 +30,13 @@ const Portal = ({ children, rootClass = 'portal-modal-root' }: PortalProps): JSX
 
 		return () => {
 			el && modalRoot?.removeChild(el)
+			modalRoot && document.body.removeChild(modalRoot)
 		}
 	}, [])
 
-	if (!portal) {
-		return null
-	}
+		if (!portal) {
+			return null
+		}
 
 	return ReactDOM.createPortal(children, portal)
 }

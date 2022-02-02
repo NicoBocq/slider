@@ -52,17 +52,57 @@ body {
 }
 
 .swiper-thumbs {
-  margin-top: 10px;
 
   .swiper-wrapper {
-    display: flex;
-    justify-content: center;
+    //display: flex;
+    //justify-content: center;
 
     .swiper-slide {
       cursor: pointer;
-      border: 2px solid transparent;
+      border: 2px solid #ADADAD;
+      width: 48px;
+      height: 48px;
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
       &.swiper-slide-thumb-active {
         border: 2px solid #008bd2;
+      }
+    }
+  }
+}
+
+.thumbs-custom {
+  margin-top: 10px;
+  display: flex;
+  padding: 0 24px;
+  .video {
+    cursor: pointer;
+    flex-shrink: 0;
+    margin-left: 8px;
+    width: 72px;
+    height: 48px;
+    border: 2px solid #ADADAD;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    > div {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      svg {
+        width: 16px;
+        fill: #188acb;
+      }
+      span {
+        text-transform: uppercase;
+        font-size: 12px;
+        font-weight: 700;
+        margin-top: 4px;
       }
     }
   }
@@ -181,28 +221,28 @@ body {
   }
 }
 
-.swiper-thumbs {
-  margin-top: 10px;
-  .swiper-slide {
-    cursor: pointer;
-    border: 2px solid transparent;
-    &.swiper-slide-thumb-active {
-      border: 2px solid #008bd2;
-    }
-  }
-}
-.swiper {
-  .swiper-slide {
-    // set the height of the slider component
-    height: 300px;
-  }
-  @media screen and (max-width: 768px) {
-    .swiper-button-prev,
-    .swiper-button-next {
-      display: none;
-    }
-  }
-}
+//.swiper-thumbs {
+//  margin-top: 10px;
+//  .swiper-slide {
+//    cursor: pointer;
+//    border: 2px solid #ADADAD;
+//    &.swiper-slide-thumb-active {
+//      border: 2px solid #008bd2;
+//    }
+//  }
+//}
+//.swiper {
+//  .swiper-slide {
+//    // set the height of the slider component
+//    height: 300px;
+//  }
+//  @media screen and (max-width: 768px) {
+//    .swiper-button-prev,
+//    .swiper-button-next {
+//      display: none;
+//    }
+//  }
+//}
 
 .overlay {
   position: fixed;
@@ -243,27 +283,32 @@ body {
     }
 
     .swiper {
-
+      .swiper-button-prev {
+        left: 24px;
+      }
+      .swiper-button-next {
+        right: 24px;
+      }
       .swiper-slide {
       }
     }
 
-    .swiper-thumbs {
-      .swiper-wrapper {
-        justify-content: center;
-        @media screen and (max-width: 768px) {
-          justify-content: flex-start;
-        }
-      }
-    }
+    //.swiper-thumbs {
+    //  .swiper-wrapper {
+    //    justify-content: center;
+    //    @media screen and (max-width: 768px) {
+    //      justify-content: flex-start;
+    //    }
+    //  }
+    //}
 
     .close {
       display: inline-block;
       z-index: 102;
       background: transparent;
       position: absolute;
-      top: 1rem;
-      right: 1rem;
+      top: 24px;
+      right: 24px;
       border: 0;
       padding: 0;
       color: #707070;
@@ -280,7 +325,7 @@ body {
       justify-content: center;
       align-items: center;
       position: absolute;
-      right: 1rem;
+      right: 24px;
       bottom: 8rem;
       border-radius: 0.5rem;
       font-size: 11px;

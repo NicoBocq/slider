@@ -9,12 +9,11 @@
     "21205316124eca4a97df4.95637133.jpg",
     "21205316124ec58ac9ff9.52985792.jpg",
     "21205316124ec879a6336.48965107.jpg",
-    "21205316124ec9dbd0ef5.33622980.jpg",
-    "21205316124eca4a97df4.95637133.jpg"
+    "21205316124ec9dbd0ef5.33622980.jpg"
   ],
-  "videos": [],
+  "videos": [{"id":7,"url":"https:\/\/www.youtube.com\/watch?v=pQNnjuYQVtg","embedUrl":"https:\/\/www.youtube.com\/embed\/pQNnjuYQVtg","picture":"https:\/\/i.ytimg.com\/vi\/pQNnjuYQVtg\/maxresdefault.jpg","site":"@youtube","status":"valid","product":{}}],
   "productName": "Vélo de Route Trek Émonda SL 6 eTap Sram Rival eTap AXS 12V Rouge Crimson 2022",
-  "thumb": "https://media-8410.pr.k8s.alltricks.buzz/thumb/",
-  "medium": "https://media-8410.pr.k8s.alltricks.buzz/medium/",
-  "hd": "https://media-8410.pr.k8s.alltricks.buzz/hd/"
+  "thumb": "https://media.alltricks.com/thumb/",
+  "medium": "https://media.alltricks.com/medium/",
+  "hd": "https://media.alltricks.com/hd/"
 }

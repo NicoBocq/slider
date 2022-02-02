@@ -1,19 +1,21 @@
 import SwiperCore from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Item } from './Slider';
+import React from "react";
 
 type SliderThumbProps = {
   items: Item[];
   setThumbsSwiper?: (swiper: SwiperCore) => void;
   control?: SwiperCore;
+  setOverlay: ({ active: boolean, isVideo: boolean }) => void;
+  isOverlay?: boolean;
 };
 
-const videoIcon = () => {
+const VideoIcon = () => {
   return (
     <svg
       xmlns='http://www.w3.org/2000/svg'
       viewBox='0 0 16 9.2'
-      style={{ width: '28px', fill: '#188acb' }}
     >
       <g id='Calque_2' data-name='Calque 2'>
         <g id='Calque_1-2' data-name='Calque 1'>
@@ -28,31 +30,41 @@ const videoIcon = () => {
   )
 }
 
-const SwiperThumb: React.FC<SliderThumbProps> = ({ items, setThumbsSwiper, control }) => {
+const SwiperThumb: React.FC<SliderThumbProps> = ({ items, isOverlay= false, setThumbsSwiper, setOverlay, control }) => {
+  const onClick = () =>{
+    setOverlay({ active: true, isVideo: true });
+  }
+  const onClickThumbs = () => {
+    if (!isOverlay) return
+    setOverlay({ active: true, isVideo: false });
+  }
   return (
-    <Swiper
-      spaceBetween={10}
-      slidesPerView="auto"
-      loopedSlides={items.length}
-      onSwiper={setThumbsSwiper}
-      controller={{ control }}
-    >
-      {items.map(({ filename, thumb }, index) => (
-        <SwiperSlide
-          key={'thumb-' + index}
-          style={{
-            backgroundImage: `url(${thumb + filename})`,
-            height: '48px',
-            width: '48px',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        />
-      ))}
-    </Swiper>
+    <div className="thumbs-custom">
+      <Swiper
+        spaceBetween={10}
+        slidesPerView="auto"
+        loopedSlides={items.length}
+        onSwiper={setThumbsSwiper}
+        controller={{ control }}
+      >
+        {items.map(({ filename, isVideo, thumb }, index) => (
+          <SwiperSlide
+            onClick={onClickThumbs}
+            key={'thumb-' + index}
+            style={{
+              backgroundImage: `url(${isVideo ? filename : thumb + filename})`
+            }}
+          >
+          </SwiperSlide>
+        ))}
+      </Swiper>
+      <div className="video" onClick={onClick}>
+        <div>
+          <VideoIcon />
+          <span>Vidéo</span>
+        </div>
+      </div>
+    </div>
   );
 };
 
