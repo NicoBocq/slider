@@ -7,12 +7,11 @@ import 'swiper/css/effect-fade';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/zoom';
-import Portal from './Portal';
 
 import SwiperCore, { Lazy, Zoom, Pagination, Navigation, Controller, Thumbs } from 'swiper';
 import SwiperThumb from './SwiperThumb';
 import { Picture, Overlay, Video } from './Slider';
-import ReactDOM from 'react-dom';
+import {createPortal} from 'react-dom';
 
 // Render the fullscreen slider
 // Ugly display management : necessity to use 'visibility: hidden' to hide the slider.
@@ -138,7 +137,7 @@ const SliderOverlay = ({
     return <></>;
   }
 
-  return (
+  const template = (
         <div className="overlay" onClick={onClose} style={{  visibility: overlay.isActive ? 'visible' : 'hidden' }}>
           <animated.div className="dialog" style={dialogAnimation} ref={dialogRef} onClick={stopPropagation}>
             <button onClick={onClose} className="close">
@@ -147,14 +146,16 @@ const SliderOverlay = ({
 
             <PinchIndicator isHidden={isZoomed || overlay.isVideo} />
             {overlay.isVideo && (
+                <div style={{...slideHeight, overflow: 'hidden' }}>
                 <iframe
-                    style={{...slideHeight, borderImageWidth: 0, border:0 }}
                     src={video?.embed}
                     width="100%"
+                    height={slideHeight.height}
                     title={video?.name}
                     frameBorder="0"
                     allowFullScreen
                 />
+                </div>
             )}
             <Swiper
                 style={{ order: !overlay.isVideo ? 'visible' : 'hidden', height: !overlay.isVideo ? 'auto' : '0' }}
@@ -169,13 +170,15 @@ const SliderOverlay = ({
                 modules={[Lazy, Zoom, Pagination, Navigation, Controller, Thumbs]}
                 loopedSlides={items.length}
                 slidesPerView={1}
+                // watch zoom scale
+                onZoomChange={onZoomChange}
+                onDoubleClick={onZoomChange}
+                // prevent navigation when zoomed
                 allowSlideNext={!isZoomed}
                 allowSlidePrev={!isZoomed}
                 navigation={!isZoomed}
                 controller={{ control }}
                 onSwiper={setOverlaySwiper}
-                onZoomChange={onZoomChange}
-                onDoubleClick={onZoomChange}
                 thumbs={{ swiper: thumbsSwiper }}
             >
               {items.map(({ name, hd, filename }, index) => (
@@ -197,6 +200,7 @@ const SliderOverlay = ({
           </animated.div>
         </div>
   );
+  return createPortal(template, document.body);
 }
 
 export default SliderOverlay;
