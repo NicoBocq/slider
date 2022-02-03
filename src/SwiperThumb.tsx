@@ -37,6 +37,7 @@ const SwiperThumb: React.FC<SliderThumbProps> = ({items, video, overlaySwiper, o
     setOverlay({ isActive: true, isVideo: true });
   }
   const onClickThumbs = () => {
+    if (!overlay.isActive) return
     // if video mode is active, close it
     if (overlay.isVideo) {
       setOverlay({ isActive: true, isVideo: false });

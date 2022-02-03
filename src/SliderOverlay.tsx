@@ -141,21 +141,22 @@ const SliderOverlay = ({
             </button>
 
             <PinchIndicator isHidden={isZoomed || overlay.isVideo} />
-            <div style={{  visibility: overlay.isVideo ? 'visible' : 'hidden', height: overlay.isVideo ? 'auto' : '0' }}>
-              <iframe
-                  style={slideHeight}
-                  src={video?.embed}
-                  width="100%"
-                  title={video?.name}
-                  frameBorder="0"
-                  allowFullScreen
-              />
-            </div>
+            {overlay.isVideo && (
+                <iframe
+                    style={{...slideHeight, borderImageWidth: 0, border:0 }}
+                    src={video?.embed}
+                    width="100%"
+                    title={video?.name}
+                    frameBorder="0"
+                    allowFullScreen
+                />
+            )}
             <Swiper
-                style={{ visibility: !overlay.isVideo ? 'visible' : 'hidden', height: !overlay.isVideo ? 'auto' : '0' }}
+                style={{ order: !overlay.isVideo ? 'visible' : 'hidden', height: !overlay.isVideo ? 'auto' : '0' }}
                 zoom
                 loop
                 watchSlidesProgress
+                enabled={!overlay.isActive}
                 lazy
                 preloadImages={false}
                 preventInteractionOnTransition
