@@ -14,6 +14,10 @@ import SwiperThumb from './SwiperThumb';
 import { Picture, Overlay, Video } from './Slider';
 import ReactDOM from 'react-dom';
 
+// Render the fullscreen slider
+// Ugly display management : necessity to use 'visibility: hidden' to hide the slider.
+// At the moment, don't know how to don't render the slider and init it to allow sync between the 4 instances of swiper.
+
 const CloseIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -74,7 +78,7 @@ const SliderOverlay = ({
   const [thumbsSwiper, setThumbsSwiper] = useState<SwiperCore | undefined>();
 
   const onZoomChange = (swiperCore: SwiperCore) => {
-    // onZoomChange return initial zoom value on desktop
+    // onZoomChange return initial zoom value on desktop, the actual value on mobile
     // onDoubleClick return zoom value after double tap / click
     // onDoubleClick is fired last and set the right value
     const procZoom = swiperCore.zoom.scale !== 1;
@@ -157,6 +161,7 @@ const SliderOverlay = ({
                 zoom
                 loop
                 watchSlidesProgress
+				// prevent overlay slider events on default slider (cf use of 'visibility: hidden')
                 enabled={!overlay.isActive}
                 lazy
                 preloadImages={false}
