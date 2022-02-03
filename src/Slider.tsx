@@ -79,11 +79,6 @@ export default function Slider({
     setOverlay({isActive: true, isVideo: false });
   };
 
-  const onClose = () => {
-    setOverlay({isActive: false, isVideo: false });
-    overlaySwiper?.zoom.out();
-  };
-
   const appHeight = () => {
     const vh = window.innerHeight * 0.01
     document.documentElement.style.setProperty('--vh', `${vh}px`)
@@ -133,7 +128,6 @@ export default function Slider({
         video={video}
         control={swiper}
         setOverlaySwiper={setOverlaySwiper}
-        onClose={onClose}
         overlay={overlay}
         setOverlay={setOverlay}
         overlaySwiper={overlaySwiper}

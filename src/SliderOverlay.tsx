@@ -53,7 +53,6 @@ type SliderOverlayProps = {
   items: Picture[];
   control?: SwiperCore;
   setOverlaySwiper: (swiper: SwiperCore) => void;
-  onClose: () => void;
   setOverlay: (overlay: Overlay) => void;
   video?: Video;
   overlaySwiper?: SwiperCore;
@@ -66,7 +65,6 @@ const SliderOverlay = ({
   overlay,
   setOverlay,
   overlaySwiper,
-  onClose,
   video
 }: SliderOverlayProps): JSX.Element => {
   const [isZoomed, setZoom] = useState(false);
@@ -80,6 +78,14 @@ const SliderOverlay = ({
     // onDoubleClick is fired last and set the right value
     const procZoom = swiperCore.zoom.scale !== 1;
     setZoom(procZoom);
+  };
+
+  const onClose = () => {
+    setOverlay({isActive: false, isVideo: false });
+    if (isZoomed) {
+      overlaySwiper?.zoom.out();
+      setZoom(false);
+    }
   };
 
   const slideHeight = useMemo(() => {
