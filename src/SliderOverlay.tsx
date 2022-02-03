@@ -11,7 +11,7 @@ import Portal from './Portal';
 
 import SwiperCore, { Lazy, Zoom, Pagination, Navigation, Controller, Thumbs } from 'swiper';
 import SwiperThumb from './SwiperThumb';
-import { Picture, Overlay } from './Slider';
+import { Picture, Overlay, Video } from './Slider';
 import ReactDOM from 'react-dom';
 
 const CloseIcon = () => (
@@ -34,11 +34,11 @@ const PinchIcon = () => {
 };
 
 type PinchIndicatorProps = {
-  isZoomed: boolean;
+  isHidden: boolean;
 };
 
-const PinchIndicator: React.FC<PinchIndicatorProps> = ({ isZoomed }) => {
-  if (isZoomed) return null;
+const PinchIndicator: React.FC<PinchIndicatorProps> = ({ isHidden }) => {
+  if (isHidden) return null;
 
   return (
     <div className="pinch-icon">
@@ -49,27 +49,24 @@ const PinchIndicator: React.FC<PinchIndicatorProps> = ({ isZoomed }) => {
 };
 
 type SliderOverlayProps = {
-  overlay: { isActive: boolean, isVideo: boolean };
+  overlay: Overlay;
   items: Picture[];
   control?: SwiperCore;
   setOverlaySwiper: (swiper: SwiperCore) => void;
   onClose: () => void;
-  setOverlay: (p: { isVideo: boolean; isActive: boolean }) => void;
-  isVideo: boolean;
-  video?: {
-    embed: string;
-    name: string;
-  };
+  setOverlay: (overlay: Overlay) => void;
+  video?: Video;
+  overlaySwiper?: SwiperCore;
 };
 
 const SliderOverlay = ({
-  overlay,
   items,
   control,
   setOverlaySwiper,
+  overlay,
   setOverlay,
+  overlaySwiper,
   onClose,
-  isVideo,
   video
 }: SliderOverlayProps): JSX.Element => {
   const [isZoomed, setZoom] = useState(false);
@@ -89,8 +86,8 @@ const SliderOverlay = ({
     const dialogHeight = dialogRef.current?.clientHeight || 0;
     const thumbsHeight = thumbsRef.current?.clientHeight || 0;
       return {
-        // 20 : margin + spacing bottom
-        height: isZoomed ? `${dialogHeight}px` : `${dialogHeight - thumbsHeight - 58}px`,
+        // 34 : margin + spacing bottom
+        height: isZoomed ? `${dialogHeight}px` : `${dialogHeight - thumbsHeight - 34}px`,
       }
   }, [overlay.isActive, isZoomed, dialogRef, thumbsRef]);
 
@@ -131,28 +128,25 @@ const SliderOverlay = ({
   }
 
   return (
-        <div className={`overlay ${overlay.isActive && 'visible'}`} onClick={onClose}>
-          <animated.div className="dialog" style={{ ...dialogAnimation, padding: isZoomed ? '0' : '0' }} ref={dialogRef} onClick={stopPropagation}>
+        <div className="overlay" onClick={onClose} style={{  visibility: overlay.isActive ? 'visible' : 'hidden' }}>
+          <animated.div className="dialog" style={dialogAnimation} ref={dialogRef} onClick={stopPropagation}>
             <button onClick={onClose} className="close">
               <CloseIcon />
             </button>
 
-            <PinchIndicator isZoomed={isZoomed} />
-            {isVideo && (
-                <div style={{ display: overlay.isVideo ? 'block' : 'none' }}>
-                  <iframe
-                      className="mfp-iframe"
-                      src={video?.embed}
-                      style={slideHeight}
-                      width="100%"
-                      title={video?.name}
-                      frameBorder="0"
-                      allowFullScreen
-                  />
-                </div>
-            )}
+            <PinchIndicator isHidden={isZoomed || overlay.isVideo} />
+            <div style={{  visibility: overlay.isVideo ? 'visible' : 'hidden', height: overlay.isVideo ? 'auto' : '0' }}>
+              <iframe
+                  style={slideHeight}
+                  src={video?.embed}
+                  width="100%"
+                  title={video?.name}
+                  frameBorder="0"
+                  allowFullScreen
+              />
+            </div>
             <Swiper
-                style={{ display: !overlay.isVideo ? 'block' : 'none' }}
+                style={{ visibility: !overlay.isVideo ? 'visible' : 'hidden', height: !overlay.isVideo ? 'auto' : '0' }}
                 zoom
                 loop
                 watchSlidesProgress
@@ -185,7 +179,7 @@ const SliderOverlay = ({
               ))}
             </Swiper>
             <div ref={thumbsRef}>
-              <SwiperThumb setThumbsSwiper={setThumbsSwiper} items={items} setOverlay={setOverlay} overlay isVideo={isVideo} />
+              <SwiperThumb setThumbsSwiper={setThumbsSwiper} items={items} setOverlay={setOverlay} overlay={overlay} video={video} overlaySwiper={overlaySwiper} />
             </div>
           </animated.div>
         </div>

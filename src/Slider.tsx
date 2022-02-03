@@ -66,10 +66,6 @@ export default function Slider({
     }, [] as Picture[]);
   }, [pictures, thumb, hd, medium, productName]);
 
-  const isVideo = useMemo(() => {
-    return !!videos?.length;
-  }, [videos]);
-
   const video = useMemo(() => {
     if (!videos.length) return
     return {
@@ -129,7 +125,7 @@ export default function Slider({
           ))}
         </Swiper>
 
-        <SwiperThumb setThumbsSwiper={setThumbsSwiper} items={items} setOverlay={setOverlay} isVideo={isVideo} />
+        <SwiperThumb setThumbsSwiper={setThumbsSwiper} items={items} overlay={overlay} setOverlay={setOverlay} video={video} />
       </div>
 
       <SliderOverlay
@@ -140,7 +136,7 @@ export default function Slider({
         onClose={onClose}
         overlay={overlay}
         setOverlay={setOverlay}
-        isVideo={isVideo}
+        overlaySwiper={overlaySwiper}
       />
     </>
   );

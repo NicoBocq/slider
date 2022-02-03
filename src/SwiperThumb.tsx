@@ -1,15 +1,16 @@
 import SwiperCore from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Picture } from './Slider';
+import {Picture, Video, Overlay} from './Slider';
 import React from "react";
 
 type SliderThumbProps = {
   items: Picture[];
   setThumbsSwiper?: (swiper: SwiperCore) => void;
   control?: SwiperCore;
-  setOverlay: (p: { isVideo: boolean; isActive: boolean }) => void;
-  overlay?: boolean;
-  isVideo: boolean
+  overlay: Overlay;
+  setOverlay: (overlay: Overlay) => void;
+  video?: Video;
+  overlaySwiper?: SwiperCore;
 };
 
 const VideoIcon = () => {
@@ -31,13 +32,15 @@ const VideoIcon = () => {
   )
 }
 
-const SwiperThumb: React.FC<SliderThumbProps> = ({ items, isVideo, overlay= false, setThumbsSwiper, setOverlay, control }) => {
-  const onClick = () =>{
+const SwiperThumb: React.FC<SliderThumbProps> = ({items, video, overlaySwiper, overlay, setThumbsSwiper, setOverlay, control }) => {
+  const onClickVideo = () =>{
     setOverlay({ isActive: true, isVideo: true });
   }
   const onClickThumbs = () => {
-    if (!overlay) return
-    setOverlay({isActive: true, isVideo: true});
+    // if video mode is active, close it
+    if (overlay.isVideo) {
+      setOverlay({ isActive: true, isVideo: false });
+    }
   }
   return (
     <div className="thumbs-custom">
@@ -58,8 +61,8 @@ const SwiperThumb: React.FC<SliderThumbProps> = ({ items, isVideo, overlay= fals
           />
         ))}
       </Swiper>
-      { isVideo && (
-        <div className="video" onClick={onClick}>
+      { Boolean(video) && (
+        <div className="slide-video" onClick={onClickVideo}>
           <div>
             <VideoIcon />
             <span>Vidéo</span>
