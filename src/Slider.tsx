@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import './styles.scss';
 import 'swiper/css';
@@ -9,6 +9,7 @@ import 'swiper/css/zoom';
 import SwiperCore, { Lazy, Pagination, Navigation, Controller, Thumbs } from 'swiper';
 import SwiperThumb from './SwiperThumb';
 import SliderOverlay from './SliderOverlay';
+import SliderImg from "./SliderImg";
 
 export type Picture = {
   name: string;
@@ -73,7 +74,7 @@ export default function Slider({
       embed: videos[0].embedUrl,
       thumb: videos[0].picture
     }
-  }, [videos]);
+  }, [videos, productName]);
 
   const onClickImage = () => {
     setOverlay({isActive: true, isVideo: false });
@@ -83,8 +84,17 @@ export default function Slider({
     const vh = window.innerHeight * 0.01
     document.documentElement.style.setProperty('--vh', `${vh}px`)
   }
-  window.addEventListener('load', appHeight)
-  window.addEventListener('resize', appHeight)
+
+  useEffect(() => {
+    window.addEventListener('load', appHeight)
+    window.addEventListener('resize', appHeight)
+
+    return () => {
+      window.removeEventListener('load', appHeight)
+      window.removeEventListener('resize', appHeight)
+    }
+  }, []);
+
 
   return (
     <>
@@ -103,24 +113,20 @@ export default function Slider({
           controller={{ control: overlaySwiper }}
           thumbs={{ swiper: thumbsSwiper }}
         >
-          {items?.map(({ name, medium, filename }, index) => (
+          {items?.map((picture, index) => (
             <SwiperSlide key={'slider-' + index}>
-              <div className="swiper-zoom-container">
-                <img
-                  data-src={medium + filename}
-                  alt={name}
-                  onClick={onClickImage}
-                  onKeyDown={onClickImage}
-                  role="presentation"
-                  className="swiper-lazy"
-                />
-                <div className="swiper-lazy-preloader" />
-              </div>
+              <SliderImg picture={picture} onClick={onClickImage} />
             </SwiperSlide>
           ))}
         </Swiper>
 
-        <SwiperThumb setThumbsSwiper={setThumbsSwiper} items={items} overlay={overlay} setOverlay={setOverlay} video={video} />
+        <SwiperThumb
+            setThumbsSwiper={setThumbsSwiper}
+            items={items}
+            overlay={overlay}
+            setOverlay={setOverlay}
+            video={video}
+        />
       </div>
 
       <SliderOverlay

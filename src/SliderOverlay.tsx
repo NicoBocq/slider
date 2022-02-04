@@ -12,10 +12,13 @@ import SwiperCore, { Lazy, Zoom, Pagination, Navigation, Controller, Thumbs } fr
 import SwiperThumb from './SwiperThumb';
 import { Picture, Overlay, Video } from './Slider';
 import {createPortal} from 'react-dom';
+import SliderImg from "./SliderImg";
 
-// Render the fullscreen slider
+// Render the slider in fullscreen.
 // Ugly display management : necessity to use 'visibility: hidden' to hide the slider.
-// At the moment, don't know how to don't render the slider and init it to allow sync between the 4 instances of swiper.
+// At the moment, don't know how to don't render the slider and allow sync between the 4 instances of swiper
+// (even with adding props : observer and observeParents).
+// Positioning the dialog's components : unable to use flex (strange behavior of Swiper with flex positioning).
 
 const CloseIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -92,6 +95,12 @@ const SliderOverlay = ({
     }
   };
 
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      onClose();
+    }
+  }
+
   const slideHeight = useMemo(() => {
     const dialogHeight = dialogRef.current?.clientHeight || 0;
     const thumbsHeight = thumbsRef.current?.clientHeight || 0;
@@ -111,25 +120,16 @@ const SliderOverlay = ({
   }
 
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        onClose();
-      }
-    }
 
-    window.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    }
-  }, [overlay.isActive]);
-
-  useEffect(() => {
-    // no scroll on overlay.isActive dialog
     if (overlay.isActive){
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
+    }
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
     }
   }, [overlay.isActive]);
 
@@ -164,6 +164,7 @@ const SliderOverlay = ({
                 watchSlidesProgress
 				// prevent overlay slider events on default slider (cf use of 'visibility: hidden')
                 enabled={!overlay.isActive}
+                observer
                 lazy
                 preloadImages={false}
                 preventInteractionOnTransition
@@ -181,21 +182,21 @@ const SliderOverlay = ({
                 onSwiper={setOverlaySwiper}
                 thumbs={{ swiper: thumbsSwiper }}
             >
-              {items.map(({ name, hd, filename }, index) => (
+              {items.map((picture, index) => (
                   <SwiperSlide key={'slider-overlay-' + index} style={slideHeight}>
-                    <div className="swiper-zoom-container">
-                      <img
-                          data-src={hd + filename}
-                          alt={name}
-                          className="swiper-lazy"
-                      />
-                      <div className="swiper-lazy-preloader" />
-                    </div>
+                    <SliderImg isOverlay picture={picture} />
                   </SwiperSlide>
               ))}
             </Swiper>
             <div ref={thumbsRef}>
-              <SwiperThumb setThumbsSwiper={setThumbsSwiper} items={items} setOverlay={setOverlay} overlay={overlay} video={video} overlaySwiper={overlaySwiper} />
+              <SwiperThumb
+                  setThumbsSwiper={setThumbsSwiper}
+                  items={items}
+                  setOverlay={setOverlay}
+                  overlay={overlay}
+                  video={video}
+                  overlaySwiper={overlaySwiper}
+              />
             </div>
           </animated.div>
         </div>

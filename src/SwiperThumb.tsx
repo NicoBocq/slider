@@ -32,7 +32,7 @@ const VideoIcon = () => {
   )
 }
 
-const SwiperThumb: React.FC<SliderThumbProps> = ({items, video, overlaySwiper, overlay, setThumbsSwiper, setOverlay, control }) => {
+const SwiperThumb: React.FC<SliderThumbProps> = ({items, video, overlay, setThumbsSwiper, setOverlay, control }) => {
   const onClickVideo = () =>{
     setOverlay({ isActive: true, isVideo: true });
   }
@@ -49,10 +49,10 @@ const SwiperThumb: React.FC<SliderThumbProps> = ({items, video, overlaySwiper, o
         loopedSlides={items.length}
         onSwiper={setThumbsSwiper}
         controller={{ control }}
+        onClick={onClickThumbs}
       >
         {items.map(({ filename, thumb }, index) => (
           <SwiperSlide
-            onClick={onClickThumbs}
             key={'thumb-' + index}
             style={{
               backgroundImage: `url(${thumb + filename})`
