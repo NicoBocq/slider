@@ -111,7 +111,7 @@ const SliderOverlay = ({
   }, [overlay.isActive, isZoomed, dialogRef, thumbsRef]);
 
   const dialogAnimation = useSpring({
-    transform: overlay.isActive ? 'scale(1)' : 'scale(0.5)',
+    transform: overlay.isActive ? 'scale(1)' : 'scale(0)',
     opacity: overlay.isActive ? 1 : 0
   });
 
@@ -158,13 +158,13 @@ const SliderOverlay = ({
                 </div>
             )}
             <Swiper
-                style={{ visibility: !overlay.isVideo ? 'visible' : 'hidden', height: !overlay.isVideo ? 'auto' : '0' }}
+                style={{
+                  visibility: !overlay.isVideo ? 'visible' : 'hidden',
+                  height: !overlay.isVideo ? 'auto' : '0'
+                }}
                 zoom
                 loop
                 watchSlidesProgress
-				// prevent overlay slider events on default slider (cf use of 'visibility: hidden')
-                enabled={!overlay.isActive}
-                observer
                 lazy
                 preloadImages={false}
                 preventInteractionOnTransition
