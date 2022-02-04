@@ -8,8 +8,8 @@ type SliderImgProps = {
 }
 
 const SliderImg = ({isOverlay, picture,	onClick }: SliderImgProps): JSX.Element => {
-	const template = (
-		<>
+	return (
+		<div className="swiper-zoom-container">
 			<img
 				data-src={(isOverlay ? picture.hd : picture.medium) + picture.filename}
 				alt={picture.name}
@@ -19,18 +19,8 @@ const SliderImg = ({isOverlay, picture,	onClick }: SliderImgProps): JSX.Element 
 				className="swiper-lazy"
 			/>
 			<div className="swiper-lazy-preloader" />
-		</>
+		</div>
 	)
-
-	if (!isOverlay) {
-		return template;
-	} else {
-		return (
-			<div className="swiper-zoom-container">
-				{template}
-			</div>
-		)
-	}
 };
 
 export default SliderImg;
