@@ -41,15 +41,26 @@ const SwiperThumb: React.FC<SliderThumbProps> = ({items, video, overlay, setThum
     // if video mode is active, close it
     if (overlay.isVideo) setOverlay({ isActive: true, isVideo: false });
   }
+
   return (
     <div className="thumbs-custom">
       <Swiper
         spaceBetween={10}
         slidesPerView="auto"
+        breakpoints={{
+          320: {
+            slidesPerView: 4
+          },
+          640: {
+            slidesPerView: 'auto'
+          }
+        }}
         loopedSlides={items.length}
         onSwiper={setThumbsSwiper}
         controller={{ control }}
         onClick={onClickThumbs}
+        // slidesOffsetAfter={12}
+        // slidesPerGroupSkip={12}
       >
         {items.map(({ filename, thumb }, index) => (
           <SwiperSlide
@@ -60,13 +71,18 @@ const SwiperThumb: React.FC<SliderThumbProps> = ({items, video, overlay, setThum
           />
         ))}
       </Swiper>
+        {items.length > 4 && (
+            <div className="fade" style={{ right: video ? '98px' : '24px' }} />
+        )}
       { Boolean(video) && (
-        <div className="slide-video" onClick={onClickVideo}>
-          <div>
-            <VideoIcon />
-            <span>Vidéo</span>
-          </div>
-        </div>
+          <>
+            <div className="slide-video" onClick={onClickVideo}>
+              <div className="btn">
+                <VideoIcon />
+                <span>Vidéo</span>
+              </div>
+            </div>
+          </>
       )}
     </div>
   );
