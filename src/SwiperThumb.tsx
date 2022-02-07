@@ -1,6 +1,6 @@
 import SwiperCore from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import {Picture, Video, Overlay} from './Slider';
+import {Picture, Video, Overlay} from './types';
 import React from "react";
 
 type SliderThumbProps = {

@@ -1,5 +1,4 @@
-import React, {useEffect, useRef, useState, useMemo, SyntheticEvent} from 'react';
-import { animated, useSpring } from 'react-spring';
+import React, {useEffect, useRef, useState, useMemo} from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import './styles.scss';
 import 'swiper/css';
@@ -10,21 +9,16 @@ import 'swiper/css/zoom';
 
 import SwiperCore, { Lazy, Zoom, Pagination, Navigation, Controller, Thumbs } from 'swiper';
 import SwiperThumb from './SwiperThumb';
-import { Picture, Overlay, Video } from './Slider';
+import { Picture, Overlay, Video } from './types';
 import {createPortal} from 'react-dom';
 import SliderImg from "./SliderImg";
+import Dialog from "./Dialog";
 
 // Render the slider in fullscreen.
 // Ugly display management : necessity to use 'visibility: hidden' to hide the slider.
 // At the moment, don't know how to don't render the slider and allow sync between the 4 instances of swiper
 // (even with adding props : observer and observeParents).
 // Positioning the dialog's components : unable to use flex (strange behavior of Swiper with flex positioning).
-
-const CloseIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-  </svg>
-);
 
 const PinchIcon = () => {
   return (
@@ -95,12 +89,6 @@ const SliderOverlay = ({
     }
   };
 
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      onClose();
-    }
-  }
-
   const slideHeight = useMemo(() => {
     const dialogHeight = dialogRef.current?.clientHeight || 0;
     const thumbsHeight = thumbsRef.current?.clientHeight || 0;
@@ -110,40 +98,12 @@ const SliderOverlay = ({
       }
   }, [overlay.isActive, isZoomed, dialogRef, thumbsRef]);
 
-  const dialogAnimation = useSpring({
-    transform: overlay.isActive ? 'scale(1)' : 'scale(0)',
-    opacity: overlay.isActive ? 1 : 0
-  });
-
-  const stopPropagation = (e: SyntheticEvent) => {
-    e.stopPropagation();
-  }
-
-  useEffect(() => {
-
-    if (overlay.isActive){
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    }
-  }, [overlay.isActive]);
-
   if (!control) {
     return <></>;
   }
 
-  const template = (
-        <div className="overlay" onClick={onClose} style={{  visibility: overlay.isActive ? 'visible' : 'hidden' }}>
-          <animated.div className="dialog" style={dialogAnimation} ref={dialogRef} onClick={stopPropagation}>
-            <button onClick={onClose} className="close">
-              <CloseIcon />
-            </button>
-
+  return (
+        <Dialog isActive={overlay.isActive} onClose={onClose} propsRef={dialogRef}>
             <PinchIndicator isHidden={isZoomed || overlay.isVideo} />
             {overlay.isVideo && (
                 <div style={{...slideHeight, overflow: 'hidden' }}>
@@ -198,10 +158,8 @@ const SliderOverlay = ({
                   overlaySwiper={overlaySwiper}
               />
             </div>
-          </animated.div>
-        </div>
+        </Dialog>
   );
-  return createPortal(template, document.body);
 }
 
 export default SliderOverlay;

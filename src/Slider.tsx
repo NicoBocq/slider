@@ -10,43 +10,16 @@ import SwiperCore, { Lazy, Pagination, Navigation, Controller, Thumbs } from 'sw
 import SwiperThumb from './SwiperThumb';
 import SliderOverlay from './SliderOverlay';
 import SliderImg from "./SliderImg";
+import { Slider, Overlay, Picture } from "src/types";
 
-export type Picture = {
-  name: string;
-  thumb: string;
-  hd: string;
-  medium: string;
-  filename: string;
-};
-
-export type Video = {
-  name: string;
-  embed: string;
-  thumb: string;
-};
-
-export type Overlay = {
-  isActive: boolean;
-  isVideo: boolean;
-}
-
-type SliderBasicProps = {
-  pictures: string[];
-  productName: string;
-  videos: { picture: string, embedUrl: string }[];
-  thumb: string;
-  medium: string;
-  hd: string;
-};
-
-export default function Slider({
+const ProductSlider = ({
   pictures,
   productName,
   videos,
   thumb,
   hd,
   medium,
-}: SliderBasicProps): JSX.Element {
+}: Slider): JSX.Element => {
   const [swiper, setSwiper] = useState<SwiperCore | undefined>();
   const [overlaySwiper, setOverlaySwiper] = useState<SwiperCore | undefined>();
   const [thumbsSwiper, setThumbsSwiper] = useState<SwiperCore | undefined>();
@@ -127,17 +100,18 @@ export default function Slider({
             setOverlay={setOverlay}
             video={video}
         />
+        <SliderOverlay
+          items={items}
+          video={video}
+          control={swiper}
+          setOverlaySwiper={setOverlaySwiper}
+          overlay={overlay}
+          setOverlay={setOverlay}
+          overlaySwiper={overlaySwiper}
+        />
       </div>
-
-      <SliderOverlay
-        items={items}
-        video={video}
-        control={swiper}
-        setOverlaySwiper={setOverlaySwiper}
-        overlay={overlay}
-        setOverlay={setOverlay}
-        overlaySwiper={overlaySwiper}
-      />
     </>
   );
 }
+
+export default ProductSlider;
