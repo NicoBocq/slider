@@ -1,7 +1,7 @@
 import SwiperCore from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import {Picture, Video, Overlay} from './types';
-import React from "react";
+import React, {useEffect, useMemo, useRef, useState} from "react";
 
 type SliderThumbProps = {
   items: Picture[];
@@ -11,6 +11,7 @@ type SliderThumbProps = {
   setOverlay: (overlay: Overlay) => void;
   video?: Video;
   overlaySwiper?: SwiperCore;
+  thumbsInstance?: SwiperCore;
 };
 
 const VideoIcon = () => {
@@ -32,7 +33,11 @@ const VideoIcon = () => {
   )
 }
 
-const SwiperThumb: React.FC<SliderThumbProps> = ({items, video, overlay, setThumbsSwiper, setOverlay, control }) => {
+const SwiperThumb: React.FC<SliderThumbProps> = ({items, video, thumbsInstance, overlay, setThumbsSwiper, setOverlay, control }) => {
+
+  const thumbsRef = useRef<HTMLDivElement | null>(null);
+  const [width, setWidth] = useState(0);
+
   const onClickVideo = () =>{
     setOverlay({ isActive: true, isVideo: true });
   }
@@ -42,20 +47,37 @@ const SwiperThumb: React.FC<SliderThumbProps> = ({items, video, overlay, setThum
     if (overlay.isVideo) setOverlay({ isActive: true, isVideo: false });
   }
 
+  // const thumbWidth = useMemo(() => {
+  //   const thumbsWidth = thumbsRef.current?.clientWidth || 0;
+  //   const width = video ? thumbsWidth - 98 : thumbsWidth
+  //   console.log(width)
+  //   return width
+  // }, [items, thumbsRef]);
+
+  useEffect(() => {
+    console.log(width)
+  }, [setWidth]);
+
+
+
   return (
-    <div className="thumbs-custom">
+    <div className="thumbs-custom" ref={thumbsRef}>
       <Swiper
         spaceBetween={10}
         slidesPerView="auto"
-        breakpoints={{
-          320: {
-            slidesPerView: 4
-          },
-          640: {
-            slidesPerView: 'auto'
-          }
-        }}
+        // breakpoints={{
+        //   320: {
+        //     slidesPerView: 4
+        //   },
+        //   640: {
+        //     slidesPerView: 'auto'
+        //   }
+        // }}
         loopedSlides={items.length}
+        onInit={(swiper) => {
+          console.log(swiper)
+        }}
+        watchSlidesProgress
         onSwiper={setThumbsSwiper}
         controller={{ control }}
         onClick={onClickThumbs}
@@ -66,15 +88,16 @@ const SwiperThumb: React.FC<SliderThumbProps> = ({items, video, overlay, setThum
           <SwiperSlide
             key={'thumb-' + index}
             style={{
+              // width: '100%',
               backgroundImage: `url(${thumb + filename})`
             }}
           />
         ))}
       </Swiper>
-        {items.length > 4 && (
-            <div className="fade" style={{ right: video ? '98px' : '24px' }} />
-        )}
-      { Boolean(video) && (
+        {/*{items.length > 4 && (*/}
+        {/*    <div className="fade" style={{ right: video ? '98px' : '24px' }} />*/}
+        {/*)}*/}
+      { video && (
           <>
             <div className="slide-video" onClick={onClickVideo}>
               <div className="btn">
