@@ -65,14 +65,14 @@ const SwiperThumb: React.FC<SliderThumbProps> = ({items, video, thumbsInstance, 
       <Swiper
         spaceBetween={10}
         slidesPerView="auto"
-        // breakpoints={{
-        //   320: {
-        //     slidesPerView: 4
-        //   },
-        //   640: {
-        //     slidesPerView: 'auto'
-        //   }
-        // }}
+        breakpoints={{
+          320: {
+            slidesPerView: 5
+          },
+          640: {
+            slidesPerView: 'auto'
+          }
+        }}
         loopedSlides={items.length}
         onInit={(swiper) => {
           console.log(swiper)

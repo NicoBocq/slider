@@ -83,7 +83,7 @@ const ProductSlider = ({
           lazy
           preloadImages={false}
           navigation
-          pagination={{ clickable: true }}
+          pagination={{ clickable: false }}
           preventInteractionOnTransition
           loopedSlides={items?.length}
           slidesPerView={1}

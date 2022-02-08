@@ -123,6 +123,15 @@ body {
     }
   }
 }
+
+.dialog {
+  .thumbs-custom {
+    @media screen and (max-width: 768px) {
+      display: flex;
+    }
+  }
+}
+
 .thumbs-custom {
   margin-top: 10px;
   display: flex;
@@ -145,7 +154,7 @@ body {
     width: 74px;
     height: 48px;
     display: flex;
-    margin-left: 12px;
+    margin-left: 10px;
     .btn {
       cursor: pointer;
       width: 100%;
