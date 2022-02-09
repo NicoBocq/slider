@@ -92,17 +92,18 @@ body {
     position: absolute;
     bottom: 2px;
     right: 24px;
-    width: 16px;
-    height: 16px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    background: #707070;
+    background: #fff;
+    border: 1px solid #707070;
     display: flex;
     justify-content: center;
     align-items: center;
     svg {
-      width: 12px;
-      height: 12px;
-      fill: #fff;
+      width: 20px;
+      height: 20px;
+      fill: #008bd2;
     }
   }
   .swiper-pagination {
@@ -118,7 +119,7 @@ body {
       //margin: 0 2px;
 
       &.swiper-pagination-bullet-active {
-        background: #707070;
+        background-color: #707070;
       }
     }
   }
@@ -185,6 +186,16 @@ body {
     .swiper-button-prev,
     .swiper-button-next {
       display: none;
+    }
+  }
+}
+
+.overlay {
+  .slide-video {
+    position: absolute;
+    right: 24px;
+    @media screen and (max-width: 768px) {
+      position: unset;
     }
   }
 }
@@ -369,10 +380,11 @@ body {
     .close {
       display: inline-block;
       z-index: 102;
-      background: transparent;
+      background: #fff;
       position: absolute;
       top: 24px;
       right: 24px;
+      border-radius: 0.5rem;
       border: 0;
       padding: 0;
       color: #707070;

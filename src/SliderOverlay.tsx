@@ -57,6 +57,8 @@ type SliderOverlayProps = {
   setOverlay: (overlay: Overlay) => void;
   video?: Video;
   overlaySwiper?: SwiperCore;
+  allowFs: boolean;
+  setAllowFs: (allowFs: boolean) => void;
 };
 
 const SliderOverlay = ({
@@ -66,7 +68,8 @@ const SliderOverlay = ({
   overlay,
   setOverlay,
   overlaySwiper,
-  video
+  video,
+  allowFs = true
 }: SliderOverlayProps): JSX.Element => {
   const [isZoomed, setZoom] = useState(false);
   const dialogRef = useRef<HTMLDivElement | null>(null);
@@ -113,7 +116,7 @@ const SliderOverlay = ({
                       height={slideHeight.height}
                       title={video?.name}
                       frameBorder="0"
-                      allowFullScreen
+                      allowFullScreen={allowFs}
                   />
                 </div>
             )}

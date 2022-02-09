@@ -12,6 +12,23 @@ import SliderOverlay from './SliderOverlay';
 import SliderImg from "./SliderImg";
 import { Slider, Overlay, Picture } from "src/types";
 
+const VideoIcon = (
+      <svg
+          xmlns='http://www.w3.org/2000/svg'
+          viewBox='0 0 16 9.2'
+      >
+        <g id='Calque_2' data-name='Calque 2'>
+          <g id='Calque_1-2' data-name='Calque 1'>
+            <path
+                id='camera-video-avec-bouton-de-lecture'
+                className='cls-1'
+                d='M15.3.6a1.06,1.06,0,0,0-1.2.2l-2,2.1V1.6A1.58,1.58,0,0,0,10.5,0H1.6A1.64,1.64,0,0,0,0,1.6v6A1.58,1.58,0,0,0,1.6,9.2h8.9a1.58,1.58,0,0,0,1.6-1.6V6.4l2,2.1a1.06,1.06,0,0,0,1.2.2,1.2,1.2,0,0,0,.7-1V1.6A1.2,1.2,0,0,0,15.3.6ZM7.6,5.1,5.4,6.8a.45.45,0,0,1-.5,0c-.2-.1-.3-.2-.3-.4V2.9a.55.55,0,0,1,.3-.5.47.47,0,0,1,.6.1L7.7,4.2a.77.77,0,0,1-.1.9c.1-.1,0-.1,0,0Z'
+            />
+          </g>
+        </g>
+      </svg>
+  )
+
 const ProductSlider = ({
   pictures,
   productName,
@@ -19,6 +36,8 @@ const ProductSlider = ({
   thumb,
   hd,
   medium,
+  allowFs,
+  setAllowFs
 }: Slider): JSX.Element => {
   const [swiper, setSwiper] = useState<SwiperCore | undefined>();
   const [overlaySwiper, setOverlaySwiper] = useState<SwiperCore | undefined>();
@@ -64,6 +83,7 @@ const ProductSlider = ({
   }
 
   useEffect(() => {
+    swiper && console.log(swiper);
     window.addEventListener('load', appHeight)
     window.addEventListener('resize', appHeight)
 
@@ -99,11 +119,7 @@ const ProductSlider = ({
           ))}
           { video && (
               <div className="video-bullet" onClick={onClickVideo}>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-                    viewBox="0 0 16 16">
-                  <path
-                      d="M10.804 8 5 4.633v6.734L10.804 8zm.792-.696a.802.802 0 0 1 0 1.392l-6.363 3.692C4.713 12.69 4 12.345 4 11.692V4.308c0-.653.713-.998 1.233-.696l6.363 3.692z"/>
-                </svg>
+                {VideoIcon}
               </div>
           )}
         </Swiper>
@@ -124,6 +140,8 @@ const ProductSlider = ({
           overlay={overlay}
           setOverlay={setOverlay}
           overlaySwiper={overlaySwiper}
+          allowFs={allowFs}
+          setAllowFs={setAllowFs}
         />
       </div>
     </>
