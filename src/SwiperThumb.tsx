@@ -76,6 +76,8 @@ const SwiperThumb: React.FC<SliderThumbProps> = ({items, video, isZoomed, overla
         onClick={onClickThumbs}
         centeredSlidesBounds
         observer
+        slidesOffsetAfter={24}
+        slidesOffsetBefore={24}
       >
         {items.map(({ filename, thumb }, index) => (
           <SwiperSlide
