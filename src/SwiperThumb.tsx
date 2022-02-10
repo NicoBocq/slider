@@ -74,7 +74,6 @@ const SwiperThumb: React.FC<SliderThumbProps> = ({items, video, isZoomed, overla
         onSwiper={setThumbsSwiper}
         controller={{ control }}
         onClick={onClickThumbs}
-        centeredSlidesBounds
         observer
         slidesOffsetAfter={items.length > 4 ? 24 : 0}
         slidesOffsetBefore={items.length > 4 ? 24 : 0}

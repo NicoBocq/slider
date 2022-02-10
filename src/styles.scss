@@ -175,6 +175,9 @@ body {
       svg {
         width: 16px;
         fill: #188acb;
+        @media screen and (max-width: 768px) {
+          width: 24px;
+        }
       }
       span {
         text-transform: uppercase;
