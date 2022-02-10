@@ -12,7 +12,7 @@ type DialogProps = {
 const Dialog: React.FC<DialogProps> = ({ isActive, onClose, propsRef, children }: DialogProps) => {
 
 	const transition = useSpring({
-		transform: isActive ? 'scale(1)' : 'scale(0)',
+		transform: isActive ? 'scale(1)' : 'scale(0.5)',
 		opacity: isActive ? 1 : 0
 	});
 
@@ -27,7 +27,7 @@ const Dialog: React.FC<DialogProps> = ({ isActive, onClose, propsRef, children }
 		if (isActive){
 			document.body.style.overflow = 'hidden';
 		} else {
-			document.body.style.overflow = 'unset';
+			document.body.style.overflow = 'auto';
 		}
 
 		window.addEventListener('keydown', handleKeyDown);
@@ -50,8 +50,8 @@ const Dialog: React.FC<DialogProps> = ({ isActive, onClose, propsRef, children }
 
 
 	const template = (
-			<div className="overlay" onClick={onClose} style={{  visibility: isActive ? 'visible' : 'hidden' }}>
-				<animated.div style={{...transition, visibility: isActive ? 'visible' : 'hidden' }} className="dialog" ref={propsRef} onClick={stopPropagation}>
+			<div className="overlay" onClick={onClose} style={{  display: isActive ? 'flex' : 'none' }}>
+				<animated.div style={transition} className="dialog" ref={propsRef} onClick={stopPropagation}>
 						<CloseButton />
 					{children}
 				</animated.div>

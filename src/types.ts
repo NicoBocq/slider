@@ -24,6 +24,4 @@ export type Slider = {
 	thumb: string;
 	medium: string;
 	hd: string;
-	allowFs: boolean;
-	setAllowFs: (allowFs: boolean) => void;
 };

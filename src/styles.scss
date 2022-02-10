@@ -51,12 +51,26 @@ body {
   }
 }
 
+.alltricks-slider {
+  margin: 0 0 2rem 0;
+}
+
+.swiper {
+  .swiper-slide {
+    // set the default height of the slider component (minus the height of the navigation dots and thumbs)
+    height: 300px;
+  }
+  @media screen and (max-width: 768px) {
+    .swiper-button-prev,
+    .swiper-button-next {
+      display: none;
+    }
+  }
+}
+
+
 .swiper-thumbs {
-
   .swiper-wrapper {
-    //display: flex;
-    //justify-content: center;
-
     .swiper-slide {
       cursor: pointer;
       border: 2px solid #ADADAD;
@@ -68,29 +82,30 @@ body {
       justify-content: center;
       align-items: center;
 
-      &.swiper-slide-thumb-active:not(.no-border) {
+      &.swiper-slide-thumb-active:not(.inactive) {
         border: 2px solid #008bd2;
       }
     }
   }
 }
 
+// pagination active but not displayed on desktop
+
 .swiper-pagination {
   display: none;
+  &.swiper-pagination-bullets.swiper-pagination-horizontal {
+    bottom: 0;
+  }
 }
-.swiper-pagination-bullets{
-  bottom: 0 !important;
-}
-
-.video-bullet {
+.swiper-pagination-video {
   display: none;
 }
 
 @media screen and (max-width: 768px) {
-  .video-bullet {
-    z-index: 11;
+  .swiper-pagination-video {
+    z-index: 1;
     position: absolute;
-    bottom: 2px;
+    bottom: 0;
     right: 24px;
     width: 40px;
     height: 40px;
@@ -116,7 +131,6 @@ body {
       border-radius: 50%;
       background: #fff;
       border:2px solid #ADADAD;
-      //margin: 0 2px;
 
       &.swiper-pagination-bullet-active {
         background-color: #ADADAD;
@@ -125,23 +139,11 @@ body {
   }
 }
 
-.dialog {
-  .thumbs-custom {
-    @media screen and (max-width: 768px) {
-      display: flex;
-    }
-  }
-}
-
-.thumbs-custom {
+.swiper-thumbs-custom {
   margin-top: 10px;
   display: flex;
-  //padding: 0 0 0 24px;
   position: relative;
-  @media screen and (max-width: 768px) {
-    display: none;
-  }
-  .slide-video {
+  .swiper-slide-thumb-video {
     flex-shrink: 0;
     width: 74px;
     height: 48px;
@@ -192,32 +194,6 @@ body {
     }
   }
 }
-.swiper {
-  .swiper-slide {
-    // set the height of the slider component
-    height: 300px;
-  }
-  @media screen and (max-width: 768px) {
-    .swiper-button-prev,
-    .swiper-button-next {
-      display: none;
-    }
-  }
-}
-
-.overlay {
-  .slide-video {
-    position: absolute;
-    right: 24px;
-    @media screen and (max-width: 768px) {
-      right: 0;
-    }
-  }
-}
-
-.alltricks-slider {
-  margin: 0 0 2rem 0;
-}
 
 .overlay {
   position: fixed;
@@ -226,7 +202,7 @@ body {
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
-  z-index: 101;
+  z-index: 100;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -256,24 +232,22 @@ body {
       .swiper-button-prev {
         left: 24px;
       }
+
       .swiper-button-next {
         right: 24px;
       }
-      .swiper-slide {
+    }
+
+    .swiper-slide-thumb-video {
+      position: absolute;
+      right: 24px;
+      @media screen and (max-width: 768px) {
+        right: 0;
       }
     }
 
-    //.swiper-thumbs {
-    //  .swiper-wrapper {
-    //    justify-content: center;
-    //    @media screen and (max-width: 768px) {
-    //      justify-content: flex-start;
-    //    }
-    //  }
-    //}
-
     .close {
-      z-index: 102;
+      z-index: 101;
       background: #fff;
       position: absolute;
       top: 24px;
@@ -287,10 +261,10 @@ body {
       height: 40px;
     }
 
-    .pinch-icon {
+    .pinch-tooltip {
       display: flex;
       width: 200px;
-      z-index: 102;
+      z-index: 101;
       justify-content: center;
       align-items: center;
       position: absolute;
@@ -311,9 +285,6 @@ body {
         height: 40px;
         color: #ADADAD;
       }
-      //@media screen and (max-width: 768px) {
-      //    display: flex;
-      //}
     }
   }
 }
