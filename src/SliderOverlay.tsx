@@ -102,7 +102,7 @@ const SliderOverlay = ({
     const thumbsHeight = thumbsRef.current?.clientHeight || 0;
       return {
         // 34 : margin + spacing bottom
-        height: isZoomed ? `${dialogHeight}px` : `${dialogHeight - thumbsHeight - 34}px`,
+        height: isZoomed ? `${dialogHeight}px` : `${dialogHeight - thumbsHeight - 24}px`,
       }
   }, [overlay.isActive, isZoomed, dialogRef, thumbsRef]);
 

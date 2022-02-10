@@ -91,7 +91,7 @@ const SwiperThumb: React.FC<SliderThumbProps> = ({items, video, isZoomed, overla
       { video && (
           <>
             <div className={`slide-video ${overlay.isVideo || isZoomed ? 'hide-on-mobile' : ''}`} onClick={onClickVideo}>
-              <div className="btn">
+              <div className={`btn ${overlay.isVideo && 'active'}`}>
                 <VideoIcon />
                 <span>Vidéo</span>
               </div>
