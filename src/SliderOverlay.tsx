@@ -36,15 +36,20 @@ const PinchIcon = () => {
 
 type PinchIndicatorProps = {
   isHidden: boolean;
+  overlay: Overlay;
 };
 
-const PinchIndicator: React.FC<PinchIndicatorProps> = ({ isHidden }) => {
-  if (isHidden) return null;
-
+const PinchIndicator: React.FC<PinchIndicatorProps> = ({ isHidden, overlay }) => {
+  const [visible, setVisibility] = useState(false);
+  useEffect(() => {
+    const timeout = setTimeout(() => setVisibility(true), 5000);
+    return () => clearTimeout(timeout);
+  }, [overlay]);
+  if (isHidden || visible) return null;
   return (
     <div className="pinch-icon">
-      <span>Appuyez 2 fois ou pincez pour zoomer</span>
       <PinchIcon />
+      <span>Appuyez 2 fois ou pincez pour zoomer</span>
     </div>
   );
 };
@@ -80,7 +85,7 @@ const SliderOverlay = ({
     // onZoomChange return initial zoom value on desktop, the actual value on mobile
     // onDoubleClick return zoom value after double tap / click
     // onDoubleClick is fired last and set the right value
-    const procZoom = swiperCore.zoom.scale !== 1;
+    const procZoom = swiperCore.zoom.scale > 1;
     setZoom(procZoom);
   };
 
@@ -169,6 +174,7 @@ const SliderOverlay = ({
                   overlay={overlay}
                   video={video}
                   overlaySwiper={overlaySwiper}
+                  isZoomed={isZoomed}
               />
             </div>
         </Dialog>

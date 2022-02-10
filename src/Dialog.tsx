@@ -2,12 +2,6 @@ import React, {SyntheticEvent, useEffect} from "react";
 import {animated, useSpring} from "react-spring";
 import {createPortal} from "react-dom";
 
-const CloseIcon = () => (
-	<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-		<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-	</svg>
-);
-
 type DialogProps = {
 	isActive: boolean;
 	onClose: () => void;
@@ -46,12 +40,19 @@ const Dialog: React.FC<DialogProps> = ({ isActive, onClose, propsRef, children }
 		e.stopPropagation();
 	}
 
+	const CloseButton = () => (
+			<span onClick={onClose} className="close">
+				<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+					<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+				</svg>
+			</span>
+	);
+
+
 	const template = (
 			<div className="overlay" onClick={onClose} style={{  visibility: isActive ? 'visible' : 'hidden' }}>
 				<animated.div style={{...transition, visibility: isActive ? 'visible' : 'hidden' }} className="dialog" ref={propsRef} onClick={stopPropagation}>
-					<button onClick={onClose} className="close">
-						<CloseIcon />
-					</button>
+						<CloseButton />
 					{children}
 				</animated.div>
 			</div>

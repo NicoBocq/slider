@@ -12,6 +12,7 @@ type SliderThumbProps = {
   video?: Video;
   overlaySwiper?: SwiperCore;
   thumbsInstance?: SwiperCore;
+  isZoomed: boolean;
 };
 
 const VideoIcon = () => {
@@ -33,7 +34,7 @@ const VideoIcon = () => {
   )
 }
 
-const SwiperThumb: React.FC<SliderThumbProps> = ({items, video, thumbsInstance, overlay, setThumbsSwiper, setOverlay, control }) => {
+const SwiperThumb: React.FC<SliderThumbProps> = ({items, video, isZoomed, overlay, setThumbsSwiper, setOverlay, control }) => {
 
   const thumbsRef = useRef<HTMLDivElement | null>(null);
   const [width, setWidth] = useState(0);
@@ -65,14 +66,6 @@ const SwiperThumb: React.FC<SliderThumbProps> = ({items, video, thumbsInstance, 
       <Swiper
         spaceBetween={10}
         slidesPerView="auto"
-        breakpoints={{
-          320: {
-            slidesPerView: 5
-          },
-          640: {
-            slidesPerView: 'auto'
-          }
-        }}
         loopedSlides={items.length}
         onInit={(swiper) => {
           console.log(swiper)
@@ -81,12 +74,13 @@ const SwiperThumb: React.FC<SliderThumbProps> = ({items, video, thumbsInstance, 
         onSwiper={setThumbsSwiper}
         controller={{ control }}
         onClick={onClickThumbs}
-        // slidesOffsetAfter={12}
-        // slidesPerGroupSkip={12}
+        centeredSlidesBounds
+        observer
       >
         {items.map(({ filename, thumb }, index) => (
           <SwiperSlide
             key={'thumb-' + index}
+            className={overlay.isVideo ? 'no-border' : '' }
             style={{
               // width: '100%',
               backgroundImage: `url(${thumb + filename})`
@@ -94,12 +88,9 @@ const SwiperThumb: React.FC<SliderThumbProps> = ({items, video, thumbsInstance, 
           />
         ))}
       </Swiper>
-        {/*{items.length > 4 && (*/}
-        {/*    <div className="fade" style={{ right: video ? '98px' : '24px' }} />*/}
-        {/*)}*/}
       { video && (
           <>
-            <div className="slide-video" onClick={onClickVideo}>
+            <div className={`slide-video ${overlay.isVideo || isZoomed ? 'hide-on-mobile' : ''}`} onClick={onClickVideo}>
               <div className="btn">
                 <VideoIcon />
                 <span>Vidéo</span>

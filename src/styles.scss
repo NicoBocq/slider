@@ -68,7 +68,7 @@ body {
       justify-content: center;
       align-items: center;
 
-      &.swiper-slide-thumb-active {
+      &.swiper-slide-thumb-active:not(.no-border) {
         border: 2px solid #008bd2;
       }
     }
@@ -96,7 +96,7 @@ body {
     height: 40px;
     border-radius: 50%;
     background: #fff;
-    border: 1px solid #707070;
+    border: 2px solid #ADADAD;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -115,11 +115,11 @@ body {
       height: 12px;
       border-radius: 50%;
       background: #fff;
-      border:1px solid #707070;
+      border:2px solid #ADADAD;
       //margin: 0 2px;
 
       &.swiper-pagination-bullet-active {
-        background-color: #707070;
+        background-color: #ADADAD;
       }
     }
   }
@@ -136,26 +136,26 @@ body {
 .thumbs-custom {
   margin-top: 10px;
   display: flex;
-  padding: 0 24px;
+  //padding: 0 0 0 24px;
   position: relative;
   @media screen and (max-width: 768px) {
     display: none;
   }
-  //.fade {
-  //  position: absolute;
-  //  top: 0;
-  //  height: 48px;
-  //  width: 20px;
-  //  z-index: 1;
-  //  overflow: hidden;
-  //  background-image: linear-gradient(to right, transparent, white);
-  //}
   .slide-video {
     flex-shrink: 0;
     width: 74px;
     height: 48px;
     display: flex;
     margin-left: 10px;
+    @media screen and (max-width: 768px) {
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 70px;
+      z-index: 103;
+      &.hide-on-mobile {
+        display: none;
+      }
+    }
     .btn {
       cursor: pointer;
       width: 100%;
@@ -164,6 +164,11 @@ body {
       border: 2px solid #ADADAD;
       display: flex;
       flex-direction: column;
+      @media screen and (max-width: 768px) {
+        border-radius: 50%;
+        width: 48px;
+        height: 48px;
+      }
       svg {
         width: 16px;
         fill: #188acb;
@@ -173,6 +178,10 @@ body {
         font-size: 12px;
         font-weight: 700;
         margin-top: 4px;
+        display: block;
+        @media screen and (max-width: 768px) {
+          display: none;
+        }
       }
     }
   }
@@ -195,134 +204,14 @@ body {
     position: absolute;
     right: 24px;
     @media screen and (max-width: 768px) {
-      position: unset;
+      right: 0;
     }
   }
 }
 
-//.swiper-container .swiper-zoom-container>img {
-//    width: 100%;
-//    height: auto;
-//    object-fit: cover;
-//    object-position: center;
-//}
-
-// .overlay {
-//     position: fixed;
-//     top: 0;
-//     left: 0;
-//     width: 100%;
-//     height: 100%;
-//     background: rgba(0, 0, 0, 0.5);
-//     z-index: 1;
-//     flex-direction: column;
-//     justify-content: center;
-//     align-items: center;
-//     cursor: pointer;
-
-//     .dialog {
-//         border-radius: 0.5rem;
-//         z-index: 10;
-//         background: #fff;
-//         max-width: 1280px;
-//         width: 100%;
-//         height: 80vh;
-//         position: relative;
-//         overflow: hidden;
-//         padding: 1rem;
-//         filter: drop-shadow(0 10px 8px rgb(0 0 0 / 0.04)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.1));
-//         //display: grid;
-//         //grid-template-columns: 1fr;
-//         //flex-direction: column;
-//         //align-content: center;
-
-//         @media screen and (max-width: 768px) {
-//             padding: 0;
-//             width: 100vw;
-//             height: calc(var(--vh, 1vh) * 100);
-//             border-radius: 0;
-//         }
-
-//         .swiper-thumbs {
-//             .swiper-wrapper {
-//                 justify-content: center;
-//                 @media screen and (max-width: 768px) {
-//                     justify-content: flex-start;
-//                 }
-//             }
-//         }
-
-//         .close {
-//             display: inline-block;
-//             z-index: 101;
-//             background: transparent;
-//             position: absolute;
-//             top: 1rem;
-//             right: 1rem;
-//             border:0;
-//             padding: 0;
-//             color: #707070;
-//             cursor: pointer;
-//             svg {
-//                 width: 36px;
-//                 height: 36px;
-//             }
-//         }
-
-//         .pinch-icon {
-//             display: none;
-//             z-index: 101;
-//             justify-content: center;
-//             align-items: center;
-//             position: absolute;
-//             right: 1rem;
-//             bottom: 8rem;
-//             border-radius: 0.5rem;
-//             font-size: 11px;
-//             background: #E6E6E6;
-//             padding: 0.2rem 0.5rem;
-//             svg {
-//                 margin-left: 0.2rem;
-//                 width: 20px;
-//                 height: 20px;
-//                 color: #707070;
-//             }
-//             @media screen and (max-width: 768px) {
-//                 display: flex;
-//             }
-//         }
-//     }
-// }
-
 .alltricks-slider {
   margin: 0 0 2rem 0;
-  img[alt] {
-    color: transparent;
-  }
 }
-
-//.swiper-thumbs {
-//  margin-top: 10px;
-//  .swiper-slide {
-//    cursor: pointer;
-//    border: 2px solid #ADADAD;
-//    &.swiper-slide-thumb-active {
-//      border: 2px solid #008bd2;
-//    }
-//  }
-//}
-//.swiper {
-//  .swiper-slide {
-//    // set the height of the slider component
-//    height: 300px;
-//  }
-//  @media screen and (max-width: 768px) {
-//    .swiper-button-prev,
-//    .swiper-button-next {
-//      display: none;
-//    }
-//  }
-//}
 
 .overlay {
   position: fixed;
@@ -378,7 +267,6 @@ body {
     //}
 
     .close {
-      display: inline-block;
       z-index: 102;
       background: #fff;
       position: absolute;
@@ -387,12 +275,10 @@ body {
       border-radius: 0.5rem;
       border: 0;
       padding: 0;
-      color: #707070;
+      color: #ADADAD;
       cursor: pointer;
-      svg {
-        width: 36px;
-        height: 36px;
-      }
+      width: 40px;
+      height: 40px;
     }
 
     .pinch-icon {
@@ -408,11 +294,16 @@ body {
       font-size: 12px;
       background: #e6e6e6;
       padding: 0.25rem 1rem;
+      @media screen and (max-width: 768px) {
+        bottom: 180px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
       svg {
         flex-shrink: 0;
         width: 40px;
         height: 40px;
-        color: #707070;
+        color: #ADADAD;
       }
       //@media screen and (max-width: 768px) {
       //    display: flex;
