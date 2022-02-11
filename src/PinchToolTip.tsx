@@ -23,11 +23,10 @@ const PinchToolTip: React.FC<PinchToolTipProps> = ({ overlay }: PinchToolTipProp
   useEffect(() => {
     const timeout = setTimeout(() => setVisibility(false), 3000);
     return () => clearTimeout(timeout);
-  }, [overlay.isActive]);
+  }, [overlay]);
 
   const fade = useSpring({
-    opacity: visible ? 1 : 0,
-    scale: visible ? 1 : 0.5
+    opacity: visible ? 1 : 0
   })
 
   return (

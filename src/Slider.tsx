@@ -13,7 +13,6 @@ import SliderImg from "./SliderImg";
 import VideoIcon from "./VideoIcon";
 import { Slider, Overlay, Picture } from "src/types";
 import useDeviceDetect from "./hooks/useDeviceDetect";
-import swiperThumb from "./SwiperThumb";
 
 const ProductSlider = ({
   pictures,
@@ -54,13 +53,16 @@ const ProductSlider = ({
 
   const onClickImage = () => {
     setOverlay({isActive: true, isVideo: false });
+    if (!overlay.isActive && overlaySwiper?.realIndex !== swiper?.realIndex) {
+      overlaySwiper?.slideToLoop(swiper?.realIndex ?? 0, 0)
+    }
   };
 
   const onClickVideo = () => {
     setOverlay({isActive: true, isVideo: true });
   };
 
-  const appHeight = () => {
+  const fix100vh = () => {
     const vh = window.innerHeight * 0.01
     document.documentElement.style.setProperty('--vh', `${vh}px`)
   }
@@ -71,24 +73,15 @@ const ProductSlider = ({
       thumbsSwiper?.update();
   };
 
-  useEffect(
-    () => {
-      window.addEventListener('resize', updateSwiperInstance);
-
-      return () => {
-        window.removeEventListener('resize', updateSwiperInstance);
-      };
-    },
-      []
-  );
-
   useEffect(() => {
-    window.addEventListener('load', appHeight)
-    window.addEventListener('resize', appHeight)
+    window.addEventListener('load', fix100vh)
+    window.addEventListener('resize', fix100vh)
+    window.addEventListener('resize', updateSwiperInstance);
 
     return () => {
-      window.removeEventListener('load', appHeight)
-      window.removeEventListener('resize', appHeight)
+      window.removeEventListener('load', fix100vh)
+      window.removeEventListener('resize', fix100vh)
+      window.removeEventListener('resize', updateSwiperInstance);
     }
   }, []);
 
@@ -101,7 +94,7 @@ const ProductSlider = ({
           watchSlidesProgress
           lazy
           preloadImages={false}
-          navigation
+          navigation={ !isMobile }
           pagination={{ clickable: false }}
           preventInteractionOnTransition
           loopedSlides={items?.length}
@@ -109,7 +102,7 @@ const ProductSlider = ({
           modules={[Lazy, Pagination, Navigation, Controller, Thumbs]}
           onSwiper={setSwiper}
           controller={{ control: overlaySwiper }}
-          thumbs={{ swiper: thumbsSwiper }}
+          thumbs={{ swiper: thumbsSwiper, autoScrollOffset: 1 }}
           observer
         >
           {items?.map((picture, index) => (
@@ -123,8 +116,7 @@ const ProductSlider = ({
               </div>
           )}
         </Swiper>
-        {/*{!isMobile && (*/}
-        <div style={{ display: isMobile ? 'none' : 'block' }}>
+        <div style={{ display: isMobile || (items.length === 1 && !video) ? 'none' : 'block' }}>
           <SwiperThumb
               setThumbsSwiper={setThumbsSwiper}
               items={items}
@@ -134,8 +126,6 @@ const ProductSlider = ({
               thumbsInstance={thumbsSwiper}
           />
         </div>
-
-        {/*)}*/}
         <SliderOverlay
           items={items}
           video={video}

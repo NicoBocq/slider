@@ -19,7 +19,6 @@ type SliderThumbProps = {
 
 const SwiperThumb: React.FC<SliderThumbProps> = ({items, video, isZoomed, overlay, setThumbsSwiper, setOverlay, control }) => {
 
-  const thumbsRef = useRef<HTMLDivElement | null>(null);
   const isMobile = useDeviceDetect();
   const onClickVideo = () =>{
     setOverlay({ isActive: true, isVideo: true });
@@ -33,10 +32,10 @@ const SwiperThumb: React.FC<SliderThumbProps> = ({items, video, isZoomed, overla
   const slideOffset = useMemo(() => {
     // add horizontal offset to thumb only in mobile
     return isMobile && items.length > 4 ? 24 : 0
-  }, [items])
+  }, [items, isMobile])
 
   return (
-    <div className="swiper-thumbs-custom" ref={thumbsRef}>
+    <div className="swiper-thumbs-custom">
       <Swiper
         spaceBetween={10}
         slidesPerView="auto"

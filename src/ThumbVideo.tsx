@@ -16,7 +16,7 @@ const ThumbVideo: React.FC<ThumbVideoProps> = ({ onClick, overlay, isZoomed }: T
 	return (
 		<>
 			<div className="swiper-slide-thumb-video" onClick={onClick} role="navigation">
-				<div className={`btn ${overlay.isVideo && 'active'}`}>
+				<div className={`thumb-video-body ${overlay.isVideo && 'active'}`}>
 					{VideoIcon}
 					<span>Vidéo</span>
 				</div>

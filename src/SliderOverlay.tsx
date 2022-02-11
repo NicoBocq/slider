@@ -13,12 +13,7 @@ import { Picture, Overlay, Video } from './types';
 import SliderImg from "./SliderImg";
 import Dialog from "./Dialog";
 import PinchToolTip from "./PinchToolTip";
-
-// Render the slider in fullscreen.
-// Ugly display management : necessity to use 'visibility: hidden' to hide the slider.
-// At the moment, don't know how to don't render the slider and allow sync between the 4 instances of swiper
-// (even with adding props : observer and observeParents).
-// Positioning the dialog's components : unable to use flex (strange behavior of Swiper with flex positioning).
+import useDeviceDetect from "./hooks/useDeviceDetect";
 
 type SliderOverlayProps = {
   overlay: Overlay;
@@ -43,6 +38,7 @@ const SliderOverlay = ({
   const dialogRef = useRef<HTMLDivElement | null>(null);
   const [thumbsSwiper, setThumbsSwiper] = useState<SwiperCore | undefined>();
   const [slideHeight, setSlideHeight] = useState<{ height: string }>();
+  const isMobile = useDeviceDetect();
 
   const onZoomChange = (swiperCore: SwiperCore) => {
     // onZoomChange return initial zoom value on desktop, the actual value on mobile
@@ -105,10 +101,10 @@ const SliderOverlay = ({
                 // prevent navigation when zoomed
                 allowSlideNext={!isZoomed}
                 allowSlidePrev={!isZoomed}
-                navigation={!isZoomed}
+                navigation={!isZoomed && !isMobile}
                 controller={{ control }}
                 onSwiper={setOverlaySwiper}
-                thumbs={{ swiper: thumbsSwiper }}
+                thumbs={{ swiper: thumbsSwiper, autoScrollOffset: 1 }}
                 observer
             >
               {items.map((picture, index) => (
