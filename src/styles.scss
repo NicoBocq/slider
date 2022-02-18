@@ -134,7 +134,7 @@ body {
 
 .swiper-thumbs-custom {
   margin-top: 10px;
-  //display: flex;
+  display: flex;
   position: relative;
   .swiper-slide-thumb-video {
     flex-shrink: 0;
@@ -209,9 +209,9 @@ body {
     filter: drop-shadow(0 10px 8px rgba(0, 0, 0, 0.4)) drop-shadow(0 4px 3px rgba(0, 0, 0, 0.1));
 
     .swiper-thumbs-custom {
-      position: absolute;
-      bottom: 24px;
-      width: 100%;
+        position: absolute;
+        bottom: 48px;
+        width: 100%;
     }
 
     @media screen and (max-width: 768px) {

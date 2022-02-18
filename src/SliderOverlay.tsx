@@ -67,7 +67,7 @@ const SliderOverlay = ({
 
   useEffect(() => {
     const dialogHeight = dialogRef.current?.clientHeight || 0;
-    setSlideHeight({ height: overlay.isVideo ? `${dialogHeight - 96}px` : `${dialogHeight}px` });
+    setSlideHeight({ height: overlay.isVideo ? `${dialogHeight - 108}px` : `${dialogHeight}px` });
   }, [overlay, dialogRef.current]);
 
 
