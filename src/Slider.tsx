@@ -62,10 +62,10 @@ const ProductSlider = ({
     setOverlay({isActive: true, isVideo: true });
   };
 
-//  const fix100vh = () => {
-//    const vh = window.innerHeight * 0.01
-//    document.documentElement.style.setProperty('--vh', `${vh}px`)
-//  }
+ const fix100vh = () => {
+   const vh = window.innerHeight * 0.01
+   document.documentElement.style.setProperty('--vh', `${vh}px`)
+ }
 
   const updateSwiperInstance = () => {
       // swiper?.update();
@@ -83,13 +83,13 @@ const ProductSlider = ({
   });
 
   useEffect(() => {
-    // window.addEventListener('load', fix100vh)
-    // window.addEventListener('resize', fix100vh)
+    window.addEventListener('load', fix100vh)
+    window.addEventListener('resize', fix100vh)
     window.addEventListener('resize', updateSwiperInstance);
 
     return () => {
-      // window.removeEventListener('load', fix100vh)
-      // window.removeEventListener('resize', fix100vh)
+      window.removeEventListener('load', fix100vh)
+      window.removeEventListener('resize', fix100vh)
       window.removeEventListener('resize', updateSwiperInstance);
     }
   }, []);

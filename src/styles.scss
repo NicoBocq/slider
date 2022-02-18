@@ -208,18 +208,20 @@ body {
     overflow: hidden;
     filter: drop-shadow(0 10px 8px rgba(0, 0, 0, 0.4)) drop-shadow(0 4px 3px rgba(0, 0, 0, 0.1));
 
-    .swiper-thumbs-custom {
-        position: absolute;
-        bottom: 48px;
-        width: 100%;
+    @media screen and (max-width: 768px) {
+      //position: fixed;
+      padding: 0;
+      //inset: 0;
+      //height: 100%;
+      width: 100vw;
+      min-height: calc(var(--vh, 1vh) * 100);
+      border-radius: 0;
     }
 
-    @media screen and (max-width: 768px) {
-      position: fixed;
-      padding: 0;
-      inset: 0;
-      height: 100%;
-      border-radius: 0;
+    .swiper-thumbs-custom {
+      position: absolute;
+      bottom: 48px;
+      width: 100%;
     }
 
     .swiper {
