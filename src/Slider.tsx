@@ -54,7 +54,7 @@ const ProductSlider = ({
   const onClickImage = () => {
     setOverlay({isActive: true, isVideo: false });
     if (!overlay.isActive && overlaySwiper?.realIndex !== swiper?.realIndex) {
-      overlaySwiper?.slideToLoop(swiper?.realIndex ?? 0, 0)
+      overlaySwiper?.slideToLoop(swiper?.realIndex ?? 0, 0, false)
     }
   };
 
@@ -62,25 +62,34 @@ const ProductSlider = ({
     setOverlay({isActive: true, isVideo: true });
   };
 
-  const fix100vh = () => {
-    const vh = window.innerHeight * 0.01
-    document.documentElement.style.setProperty('--vh', `${vh}px`)
-  }
+//  const fix100vh = () => {
+//    const vh = window.innerHeight * 0.01
+//    document.documentElement.style.setProperty('--vh', `${vh}px`)
+//  }
 
   const updateSwiperInstance = () => {
-      swiper?.update();
-      overlaySwiper?.update();
-      thumbsSwiper?.update();
+      // swiper?.update();
+      // overlaySwiper?.update();
+      // thumbsSwiper?.update();
   };
 
+  const SlideList: JSX.Element[] = []
+  items.map((picture) => {
+      SlideList.push(
+      <SwiperSlide key={`slide-${picture.filename}`}>
+        <SliderImg picture={picture} onClick={onClickImage} />
+      </SwiperSlide>
+    );
+  });
+
   useEffect(() => {
-    window.addEventListener('load', fix100vh)
-    window.addEventListener('resize', fix100vh)
+    // window.addEventListener('load', fix100vh)
+    // window.addEventListener('resize', fix100vh)
     window.addEventListener('resize', updateSwiperInstance);
 
     return () => {
-      window.removeEventListener('load', fix100vh)
-      window.removeEventListener('resize', fix100vh)
+      // window.removeEventListener('load', fix100vh)
+      // window.removeEventListener('resize', fix100vh)
       window.removeEventListener('resize', updateSwiperInstance);
     }
   }, []);
@@ -104,12 +113,10 @@ const ProductSlider = ({
           controller={{ control: overlaySwiper }}
           thumbs={{ swiper: thumbsSwiper, autoScrollOffset: 1 }}
           observer
+          observeParents
+          observeSlideChildren
         >
-          {items?.map((picture, index) => (
-            <SwiperSlide key={'slider-' + index}>
-              <SliderImg picture={picture} onClick={onClickImage} />
-            </SwiperSlide>
-          ))}
+          {SlideList}
           { video && (
               <div className="swiper-pagination-video" onClick={onClickVideo}>
                 {VideoIcon}

@@ -31,20 +31,28 @@ const SwiperThumb: React.FC<SliderThumbProps> = ({items, video, isZoomed, overla
 
   const slideOffset = useMemo(() => {
     // add horizontal offset to thumb only in mobile
-    return isMobile && items.length > 4 ? 24 : 0
+    return isMobile && items.length > 6 ? 24 : 0
   }, [items, isMobile])
 
   return (
     <div className="swiper-thumbs-custom">
       <Swiper
         spaceBetween={10}
-        slidesPerView="auto"
+        slidesPerView={'auto'}
         loopedSlides={items.length}
         watchSlidesProgress
         onSwiper={setThumbsSwiper}
         controller={{ control }}
         onClick={onClickThumbs}
+        slideToClickedSlide
         observer
+        freeMode= { {
+          enabled: true,
+          sticky: true,
+        }}
+        observeParents
+        observeSlideChildren
+        updateOnWindowResize
         // add horizontal margin
         slidesOffsetAfter={slideOffset}
         slidesOffsetBefore={slideOffset}

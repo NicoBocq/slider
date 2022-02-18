@@ -56,10 +56,19 @@ const SliderOverlay = ({
     }
   };
 
+  const SlideList: JSX.Element[] = []
+  items.map((picture) => {
+    SlideList.push(
+        <SwiperSlide key={`slide-overlay-${picture.filename}`} style={slideHeight}>
+          <SliderImg picture={picture} isOverlay />
+        </SwiperSlide>
+    );
+  });
+
   useEffect(() => {
     const dialogHeight = dialogRef.current?.clientHeight || 0;
-    setSlideHeight({ height: isZoomed ? `${dialogHeight}px` : `${dialogHeight - 48 - 24}px` });
-  }, [overlay, dialogRef.current, isZoomed]);
+    setSlideHeight({ height: overlay.isVideo ? `${dialogHeight - 96}px` : `${dialogHeight}px` });
+  }, [overlay, dialogRef.current]);
 
 
   if (!control) {
@@ -68,7 +77,7 @@ const SliderOverlay = ({
 
   return (
         <Dialog isActive={overlay.isActive} onClose={onClose} propsRef={dialogRef}>
-            <PinchToolTip overlay={overlay}/>
+            <PinchToolTip overlay={overlay} active={overlay.isActive}/>
             {overlay.isVideo && (
                 <div style={{...slideHeight, overflow: 'hidden' }}>
                   <iframe
@@ -106,13 +115,12 @@ const SliderOverlay = ({
                 onSwiper={setOverlaySwiper}
                 thumbs={{ swiper: thumbsSwiper, autoScrollOffset: 1 }}
                 observer
+                observeParents
+                observeSlideChildren
             >
-              {items.map((picture, index) => (
-                  <SwiperSlide key={'slider-overlay-' + index} style={slideHeight}>
-                    <SliderImg isOverlay picture={picture} />
-                  </SwiperSlide>
-              ))}
+              {SlideList}
             </Swiper>
+          <div style={{ display: isZoomed ? 'none' : 'block'}}>
             <SwiperThumb
                 setThumbsSwiper={setThumbsSwiper}
                 items={items}
@@ -122,6 +130,7 @@ const SliderOverlay = ({
                 overlaySwiper={overlaySwiper}
                 isZoomed={isZoomed}
             />
+          </div>
         </Dialog>
   );
 }
