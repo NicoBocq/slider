@@ -214,13 +214,13 @@ body {
       //inset: 0;
       //height: 100%;
       width: 100vw;
-      min-height: calc(var(--vh, 1vh) * 100);
+      height: calc(var(--vh, 1vh) * 100);
       border-radius: 0;
     }
 
     .swiper-thumbs-custom {
       position: absolute;
-      bottom: 48px;
+      bottom: 24px;
       width: 100%;
     }
 
