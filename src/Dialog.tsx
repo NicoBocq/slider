@@ -23,10 +23,16 @@ const Dialog: React.FC<DialogProps> = ({ isActive, onClose, propsRef, children }
 	}
 
 	useEffect(() => {
+		const html = document.querySelector<HTMLElement>('html');
+		if(!html) {
+			return;
+		}
 
 		if (isActive){
+			html.classList.add('is-frozen');
 			document.body.style.overflow = 'hidden';
 		} else {
+			html.classList.remove('is-frozen');
 			document.body.style.overflow = 'auto';
 		}
 

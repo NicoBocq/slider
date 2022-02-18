@@ -16,6 +16,10 @@ body {
   background: transparent;
 }
 
+.is-frozen {
+  overflow: hidden;
+}
+
 #root {
   margin: 0;
   padding: 0;
@@ -207,13 +211,17 @@ body {
     filter: drop-shadow(0 10px 8px rgba(0, 0, 0, 0.4)) drop-shadow(0 4px 3px rgba(0, 0, 0, 0.1));
 
     @media screen and (max-width: 768px) {
-      //position: fixed;
-      //inset: 0;
-      //height: 100%;
-      padding: 0;
-      width: 100vw;
-      height: calc(var(--vh, 1vh) * 100);
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 100%;
+      width: 100%;
       border-radius: 0;
+      //inset: 0;
+      padding: 0;
+      // height: calc(var(--vh, 1vh) * 100);
     }
 
     .swiper-thumbs-custom {
